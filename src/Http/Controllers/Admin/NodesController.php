@@ -2,28 +2,33 @@
 
 namespace Arbory\Base\Http\Controllers\Admin;
 
-use Arbory\Base\Admin\Constructor\BlockRegistry;
 use Arbory\Base\Admin\Form;
-use Arbory\Base\Admin\Form\Fields\Deactivator;
-use Arbory\Base\Admin\Form\FieldSet;
 use Arbory\Base\Admin\Grid;
-use Arbory\Base\Admin\Layout;
-use Arbory\Base\Admin\Layout\LayoutInterface;
-use Arbory\Base\Admin\Layout\LayoutManager;
 use Arbory\Base\Admin\Page;
-use Arbory\Base\Admin\Tools\ToolboxMenu;
+use Arbory\Base\Nodes\Admin\Form\Layout\FormLayout;
+use Arbory\Base\Nodes\Node;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Arbory\Base\Admin\Layout;
+use Illuminate\Routing\Controller;
+use Illuminate\Container\Container;
+use Arbory\Base\Admin\Form\FieldSet;
 use Arbory\Base\Admin\Traits\Crudify;
+use Illuminate\Http\RedirectResponse;
 use Arbory\Base\Html\Elements\Content;
+use Arbory\Base\Admin\Tools\ToolboxMenu;
 use Arbory\Base\Nodes\Admin\Grid\Filter;
 use Arbory\Base\Nodes\Admin\Grid\Renderer;
-use Arbory\Base\Nodes\ContentTypeDefinition;
 use Arbory\Base\Nodes\ContentTypeRegister;
-use Arbory\Base\Nodes\Node;
+use Arbory\Base\Admin\Layout\LayoutManager;
+use Arbory\Base\Nodes\ContentTypeDefinition;
+use Arbory\Base\Support\Nodes\NameGenerator;
+use Arbory\Base\Admin\Layout\LayoutInterface;
 use Arbory\Base\Repositories\NodesRepository;
-use Illuminate\Container\Container;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Arbory\Base\Admin\Form\Fields\Deactivator;
+use Arbory\Base\Admin\Constructor\BlockRegistry;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class NodesController extends Controller
 {
@@ -52,6 +57,30 @@ class NodesController extends Controller
         $this->container = $container;
         $this->contentTypeRegister = $contentTypeRegister;
     }
+
+    /**
+     * @param Model $model
+     * @param Layout\FormLayoutInterface|null $layout
+     *
+     * @return Form
+     */
+    protected function buildForm(Model $model, ?Layout\FormLayoutInterface $layout = null)
+    {
+        $form = new Form($model);
+        $form->setModule($this->module());
+        $form->setRenderer(new Form\Builder($form));
+
+
+        if ($layout) {
+            $overview = $this->overview($form, $layout);
+
+            $layout->setOverview($overview);
+            $layout->setForm($form);
+        }
+
+        return $this->form($form, $layout) ?: $form;
+    }
+
 
     /**
      * @param Form            $form
@@ -83,6 +112,15 @@ class NodesController extends Controller
 
             $fields->hasOne('content', $this->contentResolver($definition, $layout));
         });
+
+        /**
+         * @var Node
+         */
+        $node = $form->fields()->getModel();
+
+        if ($contentType = $node->getContentType()) {
+            $form->title($form->getTitle().' ('.$this->makeNameFromType($contentType).')');
+        }
 
         $form->addEventListeners(['create.after'], function () use ($form) {
             $this->afterSave($form);
@@ -151,7 +189,7 @@ class NodesController extends Controller
 
         $page = $manager->page(Page::class);
         $page->use($layout);
-        $page->bodyClass('controller-'.str_slug($this->module()->name()).' view-edit');
+        $page->bodyClass('controller-'.Str::slug($this->module()->name()).' view-edit');
 
         return $page;
     }
@@ -162,7 +200,7 @@ class NodesController extends Controller
     protected function afterSave(Form $form)
     {
         /**
-         * @var Node
+         * @var $node Node
          */
         $node = $form->getModel();
 
@@ -170,12 +208,12 @@ class NodesController extends Controller
 
         if ($parentId) {
             $parent = $node->find($parentId);
-            $node->makeChildOf($parent);
+            $node->appendToNode($parent)->save();
 
             return;
         }
 
-        $node->makeRoot();
+        $node->saveAsRoot();
     }
 
     /**
@@ -229,12 +267,12 @@ class NodesController extends Controller
         $toRightId = $request->input('toRightId');
 
         if ($toLeftId) {
-            $node->moveToRightOf($nodes->findOneBy('id', $toLeftId));
+            $node->insertAfterNode($nodes->findOneBy('id', $toLeftId));
         } elseif ($toRightId) {
-            $node->moveToLeftOf($nodes->findOneBy('id', $toRightId));
+            $node->insertBeforeNode($nodes->findOneBy('id', $toRightId));
         }
 
-        return response()->make();
+        return response();
     }
 
     /**
@@ -257,14 +295,14 @@ class NodesController extends Controller
         }
 
         $from = $request->get('from');
-        $slug = str_slug($from);
+        $slug = Str::slug($from);
 
         if (in_array($slug, $reservedSlugs, true) && $request->has('id')) {
-            $slug = str_slug($request->get('id').'-'.$from);
+            $slug = Str::slug($request->get('id').'-'.$from);
         }
 
         if (in_array($slug, $reservedSlugs, true)) {
-            $slug = str_slug($from.'-'.random_int(0, 9999));
+            $slug = Str::slug($from.'-'.random_int(0, 9999));
         }
 
         return $slug;
@@ -326,5 +364,44 @@ class NodesController extends Controller
         $definition = $this->contentTypeRegister->findByModelClass($class);
 
         return $definition;
+    }
+
+    /**
+     * @param string $type
+     * @return string
+     */
+    protected function makeNameFromType($type): string
+    {
+        return app(NameGenerator::class)->generate($type);
+    }
+
+    /**
+     * @param Form $form
+     * @return Form\Overview
+     */
+    private function overview(Form $form, ?LayoutInterface $layout = null)
+    {
+        $overview = new Form\Overview($form);
+
+        $definition = $this->resolveContentDefinition($form);
+
+        if ($definition->hasOverviewHandler()) {
+            $definition->getOverviewHandler()->call($this, $overview, $layout);
+        }
+
+        return $overview;
+    }
+
+    /**
+     * Defined layouts.
+     *
+     * @return array
+     */
+    public function layouts()
+    {
+        return [
+            'grid' => Grid\Layout::class,
+            'form' => FormLayout::class,
+        ];
     }
 }

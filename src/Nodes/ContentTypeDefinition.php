@@ -17,14 +17,20 @@ class ContentTypeDefinition
     protected $model;
 
     /**
-     * @var \Closure
+     * @var Closure
      */
     protected $fieldSetHandler;
 
     /**
-     * @var \Closure
+     * @var Closure
      */
     protected $layoutHandler;
+
+    /**
+     * @var Closure
+     */
+    protected $overviewHandler;
+
 
     /**
      * @param string $model
@@ -92,6 +98,30 @@ class ContentTypeDefinition
     public function getLayoutHandler(): Closure
     {
         return $this->layoutHandler;
+    }
+
+    /**
+     * @return Closure
+     */
+    public function getOverviewHandler(): Closure
+    {
+        return $this->overviewHandler;
+    }
+
+    /**
+     * @param Closure $overviewHandler
+     */
+    public function setOverviewHandler(Closure $overviewHandler)
+    {
+        $this->overviewHandler = $overviewHandler;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasOverviewHandler(): bool
+    {
+        return isset($this->overviewHandler);
     }
 
     /**

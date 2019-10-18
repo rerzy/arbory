@@ -2,7 +2,11 @@
 
 namespace Arbory\Base\Admin\Form\Fields;
 
+use Arbory\Base\Admin\Form\Fields\Renderer\Nested\PaneledItemRenderer;
+use Arbory\Base\Admin\Form\Overview\Navigation\ConstructorNavigation;
+use Arbory\Base\Admin\Form\Overview\Navigation\Navigable;
 use Closure;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Arbory\Base\Admin\Form\FieldSet;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +23,8 @@ use Arbory\Base\Admin\Form\Fields\Renderer\Nested\NestedItemRenderer;
 class Constructor extends AbstractRelationField implements
     NestedFieldInterface,
     RepeatableNestedFieldInterface,
-    RenderOptionsInterface
+    RenderOptionsInterface,
+    Navigable
 {
     use HasRenderOptions;
     use HasRelationships;
@@ -427,4 +432,28 @@ class Constructor extends AbstractRelationField implements
 
         return $this;
     }
+
+    public function navigation(): Renderable
+    {
+        return new ConstructorNavigation($this);
+    }
+
+    /**
+     * Format as panels
+     *
+     * @return $this
+     */
+    public function asPanels(): self
+    {
+        $this->setItemRenderer(new PaneledItemRenderer);
+        $this->addClass('in-layout');
+        $this->sortable();
+
+        $this->setHidden(true);
+        $this->setLabel('');
+        $this->setAllowToAdd(false);
+
+        return $this;
+    }
+
 }

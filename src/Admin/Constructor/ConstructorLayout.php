@@ -60,6 +60,7 @@ class ConstructorLayout extends AbstractLayout implements FormLayoutInterface
             $this->field->setLabel('');
             $this->field->setAllowToAdd(false);
         };
+
     }
 
     /**
@@ -113,21 +114,10 @@ class ConstructorLayout extends AbstractLayout implements FormLayoutInterface
     public function getField(): Form\Fields\Constructor
     {
         if ($this->field === null) {
-            $field = $this->form->fields()->findFieldByInputName($this->name);
+            $this->field = $this->form->fields()->findFieldByInputName($this->name);
 
-            if ($field === null) {
+            if ($this->field === null) {
                 throw new \RuntimeException('Constructor field must be present in constructor layout');
-            }
-
-            if ($field) {
-                $this->field = $field;
-            } else {
-                /**
-                 * @var FieldTypeRegistry
-                 */
-                $registry = app(FieldTypeRegistry::class);
-
-                $this->field = $registry->resolve('constructor', [$this->name]);
             }
         }
 
@@ -203,4 +193,16 @@ class ConstructorLayout extends AbstractLayout implements FormLayoutInterface
 
         return $this;
     }
+
+    /**
+     * @param  string  $name
+     *
+     * @return ConstructorLayout
+     */
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+}
 }

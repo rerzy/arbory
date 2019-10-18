@@ -140,3 +140,129 @@
 
 
 
+.dialog {
+    
+    &.status {
+        
+        .overview-status-confirm {
+            font-weight: bold;
+            letter-spacing: 0.9px;
+            @include font-size-largest;
+            width: steps(25);
+            padding: steps(1);
+            box-shadow: 0 4px 8px 0 rgba(70, 82, 92, 0.12), 0 8px 16px 0 rgba(70, 82, 92, 0.2);
+            border-radius: steps(0.25);
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .field {
+            margin-left: 0;
+            min-height: 0;
+            width: 100%;
+            float: none;
+            padding: 0;
+            
+            &.type-text {
+                width: steps(20);
+            }
+            
+            &.type-radio {
+                
+                margin-bottom: steps(0.5);
+                
+                .value {
+                    padding-top: 0;
+                }
+                
+                label {
+                    font-weight: bold;
+                    color: #525355;
+                }
+            }
+        }
+    }
+    
+    
+    .blocks {
+        margin-bottom: steps(2);
+    }
+    
+    .block {
+        background-color: #F8F8F8;
+        box-shadow: 1px 2px 2px 0 rgba(228, 228, 228, 0.5);
+        padding: steps(2) steps(3) steps(2) steps(3);
+        margin-bottom: steps(1.5);
+        font-size: 13px;
+        line-height: 15px;
+        letter-spacing: 0.57px;
+        
+        .content {
+            margin-left: steps(2.5);
+            color: #757575;
+        }
+    }
+}
+
+.ajaxbox-inner {
+    .dialog {
+        header {
+            @include section-header;
+            font-size: 16px;
+            
+            .close {
+                top: 50%;
+                transform: translateY(-50%);
+                
+                .fa {
+                    font-size: 22px;
+                }
+            }
+        }
+    }
+}
+
+.dialog {
+    width: steps(40);
+    
+    &.content-type {
+        &[data-columns="1"] {
+            width: steps(24);
+        }
+        
+        .body {
+            padding: steps(2) steps(3);
+            text-align: center;
+            
+            .description {
+                padding: 0 0 steps(2) 0;
+            }
+            
+            ul {
+                text-align: left;
+                margin-left: steps(2);
+            }
+        }
+        
+        .content-types {
+            @include clear-inside;
+            
+            ul {
+                @include block-list;
+                
+                li {
+                    width: steps(16);
+                    float: left;
+                    margin-bottom: steps(1);
+                }
+            }
+        }
+    }
+    
+    &:not(.content-type) {
+        .body {
+            height: steps(24);
+            overflow-y: auto;
+        }
+    }
+}

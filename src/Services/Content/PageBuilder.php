@@ -97,4 +97,16 @@ class PageBuilder
 
         return $this;
     }
+
+    /**
+     * @param  Closure  $overview
+     *
+     * @return $this
+     */
+    public function overview(Closure $overview)
+    {
+        $this->definition->setOverviewHandler($overview);
+
+        return $this;
+    }
 }
