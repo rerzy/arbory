@@ -8,6 +8,38 @@ use Illuminate\Database\Eloquent\Builder;
 trait HasActivationDates
 {
     /**
+     * @return string
+     */
+    public function getActivateAtColumnName(): string
+    {
+        return 'activate_at';
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpireAtColumnName(): string
+    {
+        return 'expire_at';
+    }
+
+    /**
+     * @return string
+     */
+    public function getQualifiedActivateAtColumnName(): string
+    {
+        return $this->getTable() . '.' . $this->getActivateAtColumnName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getQualifiedExpireAtColumnName(): string
+    {
+        return $this->getTable() . '.' . $this->getExpireAtColumnName();
+    }
+
+    /**
      * @param $value
      * @return Carbon|null
      */
@@ -39,29 +71,28 @@ trait HasActivationDates
      */
     public function scopeActive(Builder $query)
     {
-        $table = $this->getTable();
-        $now = date('Y-m-d H:i:s');
+        $now = now();
 
-        return $query->where($table.'.activate_at', '<=', $now)
-            ->where(function (Builder $query) use ($table, $now) {
-                return $query->where($table.'.expire_at', '>=', $now)
-                    ->orWhereNull($table.'.expire_at');
+        return $query->where($this->getActivateAtColumnName(), '<=', $now)
+            ->where(function (Builder $query) use ($now) {
+                return $query->where($this->getExpireAtColumnName(), '>=', $now)
+                    ->orWhereNull($this->getExpireAtColumnName());
             });
     }
 
     /**
      * @return bool
      */
-    public function hasExpired()
+    public function hasExpired(): bool
     {
-        return ! is_null($this->expire_at) && $this->expire_at->isPast();
+        return $this->expire_at !== null && $this->expire_at->isPast();
     }
 
     /**
      * @return bool
      */
-    public function hasActivated()
+    public function hasActivated(): bool
     {
-        return ! is_null($this->activate_at) && $this->activate_at->isPast();
+        return $this->activate_at !== null && $this->activate_at->isPast();
     }
 }

@@ -14,8 +14,14 @@ use Illuminate\Http\Request;
  */
 class Radio extends Checkbox
 {
+    /**
+     * @var string
+     */
     protected $rendererClass = RadioFieldRenderer::class;
 
+    /**
+     * @var string
+     */
     protected $control = RadioControl::class;
 
     /**
@@ -28,6 +34,10 @@ class Radio extends Checkbox
      */
     public function beforeModelSave(Request $request)
     {
+        if($this->isHidden() || $this->isDisabled()) {
+            return;
+        }
+
         $value = $request->has($this->getNameSpacedName()) ?: false;
 
         $this->getModel()->setAttribute($this->getName(), $value);

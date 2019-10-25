@@ -2,6 +2,7 @@
 
 namespace Arbory\Base\Admin\Form\Fields\Renderer\Nested;
 
+use Arbory\Base\Admin\Navigator\NavigableItemInterface;
 use Arbory\Base\Html\Html;
 use Arbory\Base\Admin\Panels\Panel;
 use Arbory\Base\Admin\Form\FieldSet;
@@ -17,9 +18,12 @@ class PaneledItemRenderer implements ItemInterface
 
     public function __invoke(FieldInterface $field, FieldSet $fieldSet, $index = null, array $parameters = [])
     {
+        $isTemplate = $index === '_template_';
+
         $title = $parameters['title'] ?? '';
 
         $panel = new Panel();
+        $panel->setNavigable(false);
         $panel->setTitle($title);
         $panel->addClass('item type-association')
               ->addAttributes(
@@ -33,6 +37,13 @@ class PaneledItemRenderer implements ItemInterface
         $content = new Content([
             $fieldSet->render(),
         ]);
+
+        $model = $fieldSet->getModel();
+
+        if($model instanceof NavigableItemInterface && ! $isTemplate) {
+            $panel->setNavigableItem($model);
+            $panel->setNavigable(true);
+        }
 
         $this->addSortableNavigation($field, $panel);
         $this->addRemoveButton($field, $panel, $content, $fieldSet->getNamespace().'._destroy');

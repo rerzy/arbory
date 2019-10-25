@@ -5,6 +5,7 @@ namespace Arbory\Base\Admin\Form;
 
 use Arbory\Base\Admin\Form\Overview\Blocks\Block;
 use Arbory\Base\Admin\Form;
+use Arbory\Base\Html\Elements\Element;
 use Arbory\Base\Html\Html;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Collection;
@@ -44,7 +45,7 @@ class Overview implements Renderable
     }
 
     /**
-     * @return \Arbory\Base\Html\Elements\Element|string
+     * @return Element|string
      */
     public function render()
     {
@@ -57,13 +58,23 @@ class Overview implements Renderable
         ]);
     }
 
-    public function add(Block $block)
+    /**
+     * @param  Block  $block
+     *
+     * @return Overview
+     */
+    public function add(Block $block): self
     {
         $block->setOverview($this);
         $this->blocks->push($block);
+
+        return $this;
     }
 
-    public function getForm()
+    /**
+     * @return Form
+     */
+    public function getForm(): Form
     {
         return $this->form;
     }

@@ -13,6 +13,11 @@ use Arbory\Base\Support\Activation\HasActivationDates;
  */
 class Node extends \Baum\Node
 {
+    public const STATUS_PUBLISHED = 'published';
+    public const STATUS_UNPUBLISHED = 'unpublished';
+    public const STATUS_PUBLISHED_AT_DATETIME = 'published_at_datetime';
+
+
     use UuidModelTrait;
     use HasActivationDates;
 
@@ -169,5 +174,18 @@ class Node extends \Baum\Node
         }
 
         return true;
+    }
+
+    public function getPublishedStatusAttribute()
+    {
+        if($this->isActive()) {
+            return static::STATUS_PUBLISHED;
+        }
+
+        if($this->activate_at && ! $this->hasExpired()) {
+            return static::STATUS_PUBLISHED_AT_DATETIME;
+        }
+
+        return static::STATUS_UNPUBLISHED;
     }
 }

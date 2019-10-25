@@ -2,6 +2,10 @@
 
 namespace Arbory\Base\Admin\Panels;
 
+use Arbory\Base\Admin\Form;
+use Arbory\Base\Admin\Layout\LayoutManager;
+use Arbory\Base\Admin\Navigator\NavigableItemInterface;
+use Arbory\Base\Admin\Page;
 use Arbory\Base\Admin\Tools\Toolbox;
 use Arbory\Base\Admin\Widgets\Button;
 use Arbory\Base\Admin\Tools\ToolboxMenu;
@@ -38,6 +42,11 @@ class Panel implements PanelInterface, WrappableInterface, NavigableInterface
     protected $toolbox;
 
     protected $navigable = true;
+
+    /**
+     * @var NavigableItemInterface
+     */
+    protected $navigableItem;
 
     public function __construct(RenderableInterface $renderer = null)
     {
@@ -155,7 +164,22 @@ class Panel implements PanelInterface, WrappableInterface, NavigableInterface
     {
         $this->build();
 
-        return $this->renderer->render();
+        /** @var Page $page */
+        $page = app(LayoutManager::class)->getPage();
+
+        // TODO: Refactor
+        /** @var Form $form */
+        $form = $page->getLayouts()[0]->getForm();
+        $contents = $this->renderer->render();
+
+        if(! $this->isNavigable()) {
+            return $contents;
+        }
+
+        $navigator = $form->getNavigator();
+        $this->navigator($navigator);
+
+        return $navigator->attachReference($this->navigableItem ?: $this, $contents);
     }
 
     /**
@@ -175,8 +199,11 @@ class Panel implements PanelInterface, WrappableInterface, NavigableInterface
      *
      * @return void
      */
-    public function navigator(Navigator $navigator)
+    public function navigator(Navigator $navigator): void
     {
+        if(! $this->navigableItem) {
+            $navigator->addItem($this, $this->getTitle());
+        }
     }
 
     /**
@@ -203,6 +230,18 @@ class Panel implements PanelInterface, WrappableInterface, NavigableInterface
     public function setNavigable(bool $navigable): self
     {
         $this->navigable = $navigable;
+
+        return $this;
+    }
+
+    /**
+     * @param  NavigableItemInterface  $navigableItem
+     *
+     * @return Panel
+     */
+    public function setNavigableItem(NavigableItemInterface $navigableItem): Panel
+    {
+        $this->navigableItem = $navigableItem;
 
         return $this;
     }

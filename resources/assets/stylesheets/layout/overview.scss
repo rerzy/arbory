@@ -1,6 +1,8 @@
 section.overview {
     flex: 0 0 steps(25);
     margin-left: steps(1.5);
+    position: sticky;
+    top: 0;
     
     > header {
         @include section-header;
@@ -68,12 +70,26 @@ section.overview {
     }
     
     .navigation {
+        ul {
+            list-style: none inside;
+            padding: 0;
+            margin: 0;
+        }
+        
         a {
             display: block;
             color: #5597E4;
             text-decoration: none;
             margin-bottom: steps(1.5);
             line-height: 15px;
+        }
+        
+        li.active > a {
+            font-weight: bold;
+        }
+        
+        .children {
+            margin-left: steps(2);
         }
     }
     

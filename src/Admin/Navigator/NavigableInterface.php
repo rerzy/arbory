@@ -2,7 +2,7 @@
 
 namespace Arbory\Base\Admin\Navigator;
 
-interface NavigableInterface
+interface NavigableInterface extends NavigableItemInterface
 {
     /**
      * @return bool
@@ -14,5 +14,5 @@ interface NavigableInterface
      *
      * @return mixed
      */
-    public function navigator(Navigator $navigator);
+    public function navigator(Navigator $navigator): void;
 }

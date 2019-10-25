@@ -3,10 +3,10 @@
 namespace Arbory\Base\Admin\Form\Fields;
 
 use Arbory\Base\Admin\Form\Fields\Renderer\Nested\PaneledItemRenderer;
-use Arbory\Base\Admin\Form\Overview\Navigation\ConstructorNavigation;
-use Arbory\Base\Admin\Form\Overview\Navigation\Navigable;
+use Arbory\Base\Admin\Navigator\Item;
+use Arbory\Base\Admin\Navigator\NavigableInterface;
+use Arbory\Base\Admin\Navigator\Navigator;
 use Closure;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Arbory\Base\Admin\Form\FieldSet;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +24,7 @@ class Constructor extends AbstractRelationField implements
     NestedFieldInterface,
     RepeatableNestedFieldInterface,
     RenderOptionsInterface,
-    Navigable
+    NavigableInterface
 {
     use HasRenderOptions;
     use HasRelationships;
@@ -90,9 +90,9 @@ class Constructor extends AbstractRelationField implements
     }
 
     /**
-     * @return BlockRegistry|\Illuminate\Foundation\Application|mixed
+     * @return BlockRegistry
      */
-    public function getRegistry()
+    public function getRegistry(): BlockRegistry
     {
         return $this->registry;
     }
@@ -433,11 +433,6 @@ class Constructor extends AbstractRelationField implements
         return $this;
     }
 
-    public function navigation(): Renderable
-    {
-        return new ConstructorNavigation($this);
-    }
-
     /**
      * Format as panels
      *
@@ -456,4 +451,32 @@ class Constructor extends AbstractRelationField implements
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isNavigable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param  Navigator  $navigator
+     *
+     * @return mixed
+     */
+    public function navigator(Navigator $navigator): void
+    {
+        $parentItem = $navigator->addItem($this, 'Constructor');
+        $registry = $this->getRegistry();
+
+        foreach($this->getValue() as $block) {
+            /** @var $block ConstructorBlock */
+
+            $blockType = $registry->resolve($block->name);
+
+            if($blockType) {
+                $parentItem->addChild(new Item($block, $blockType->title()));
+            }
+        }
+    }
 }

@@ -10,7 +10,7 @@ use Arbory\Base\Admin\Layout\PageInterface;
 
 class Page extends Layout implements PageInterface
 {
-    const SLOTS = [
+    public const SLOTS = [
         'header_right',
     ];
 

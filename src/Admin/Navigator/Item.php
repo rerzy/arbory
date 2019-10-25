@@ -21,7 +21,7 @@ class Item implements Renderable, Jsonable, \JsonSerializable, Arrayable
     protected $anchor;
 
     /**
-     * @var NavigableInterface
+     * @var NavigableItemInterface
      */
     protected $navigable;
 
@@ -40,7 +40,7 @@ class Item implements Renderable, Jsonable, \JsonSerializable, Arrayable
      */
     protected $order;
 
-    public function __construct(NavigableInterface $navigable, $title, $anchor = null)
+    public function __construct(NavigableItemInterface $navigable, $title, $anchor = null)
     {
         $this->navigable = $navigable;
         $this->title = $title;
@@ -109,19 +109,19 @@ class Item implements Renderable, Jsonable, \JsonSerializable, Arrayable
     }
 
     /**
-     * @return NavigableInterface
+     * @return NavigableItemInterface
      */
-    public function getNavigable(): NavigableInterface
+    public function getNavigable(): NavigableItemInterface
     {
         return $this->navigable;
     }
 
     /**
-     * @param  NavigableInterface  $navigable
+     * @param  NavigableItemInterface  $navigable
      *
      * @return Item
      */
-    public function setNavigable(NavigableInterface $navigable): self
+    public function setNavigable(NavigableItemInterface $navigable): self
     {
         $this->navigable = $navigable;
 

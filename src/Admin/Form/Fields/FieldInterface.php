@@ -187,6 +187,15 @@ interface FieldInterface
     public function beforeRender(RendererInterface $renderer);
 
     /**
+     * @param  RendererInterface  $renderer
+     *
+     * @param $contents
+     *
+     * @return mixed
+     */
+    public function afterRender(RendererInterface $renderer, $contents);
+
+    /**
      * @return bool
      */
     public function isHidden(): bool;

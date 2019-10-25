@@ -72,10 +72,9 @@ class NodesController extends Controller
 
 
         if ($layout) {
-            $overview = $this->overview($form, $layout);
-
-            $layout->setOverview($overview);
             $layout->setForm($form);
+
+            $layout->setOverview($this->makeOverview($form, $layout));
         }
 
         return $this->form($form, $layout) ?: $form;
@@ -103,12 +102,6 @@ class NodesController extends Controller
             $fields->text('meta_author');
             $fields->text('meta_keywords');
             $fields->text('meta_description');
-            $fields->dateTime('activate_at');
-            $fields->dateTime('expire_at')->rules('nullable|after_or_equal:resource.activate_at');
-
-            if ($fields->getModel()->active) {
-                $fields->add(new Deactivator('deactivate'));
-            }
 
             $fields->hasOne('content', $this->contentResolver($definition, $layout));
         });
@@ -379,9 +372,9 @@ class NodesController extends Controller
      * @param Form $form
      * @return Form\Overview
      */
-    private function overview(Form $form, ?LayoutInterface $layout = null)
+    private function makeOverview(Form $form, ?Form\OverviewLayout $layout = null)
     {
-        $overview = new Form\Overview($form);
+        $overview = $layout->getOverview();
 
         $definition = $this->resolveContentDefinition($form);
 

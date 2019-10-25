@@ -20,22 +20,7 @@ section > form > .body {
 section:not(.nested),
 section > form {
     > header {
-        @include section-header;
-        @include clear-inside;
-        
-        margin-top: steps(2);
-        
-        h1 {
-            float: left;
-        }
-        
-        .extras {
-            float: right;
-            
-            &:not(.only-text) {
-                margin: steps(-0.5) steps(-2) steps(-0.5) 0;
-            }
-        }
+        @include panel-header;
     }
     
 }
@@ -43,10 +28,7 @@ section > form {
 section:not(.nested):not(.dialog),
 section:not(.dialog) > form {
     > .body {
-        border-width: 0 1px 1px 1px;
-        border-style: solid;
-        border-color: $color-border-normal;
-        margin-bottom: -1px;
+        @include panel-body;
     }
 }
 

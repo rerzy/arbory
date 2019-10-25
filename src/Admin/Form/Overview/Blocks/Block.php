@@ -22,7 +22,7 @@ abstract class Block
      * Status constructor.
      * @param string $name
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->setName($name);
     }
@@ -41,17 +41,21 @@ abstract class Block
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @param Overview $overview
+     * @param  Overview  $overview
+     *
+     * @return Block
      */
     public function setOverview(Overview $overview)
     {
         $this->overview = $overview;
+
+        return $this;
     }
 
     /**

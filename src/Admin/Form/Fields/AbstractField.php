@@ -2,6 +2,13 @@
 
 namespace Arbory\Base\Admin\Form\Fields;
 
+use Arbory\Base\Admin\Form;
+use Arbory\Base\Admin\Layout\LayoutManager;
+use Arbory\Base\Admin\Navigator\NavigableInterface;
+use Arbory\Base\Admin\Navigator\Navigator;
+use Arbory\Base\Admin\Page;
+use Arbory\Base\Admin\Traits\EventDispatcher;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Arbory\Base\Admin\Form\FieldSet;
@@ -18,6 +25,7 @@ abstract class AbstractField implements FieldInterface, ControlFieldInterface
 {
     use IsTranslatable;
     use IsControlField;
+    use EventDispatcher;
 
     /**
      * @var string
@@ -123,7 +131,7 @@ abstract class AbstractField implements FieldInterface, ControlFieldInterface
      */
     public function getFieldTypeName()
     {
-        return 'type-'.camel_case(class_basename(static::class));
+        return 'type-'.Str::camel(class_basename(static::class));
     }
 
     /**
@@ -377,7 +385,7 @@ abstract class AbstractField implements FieldInterface, ControlFieldInterface
      */
     public function getFieldClasses(): array
     {
-        $type = snake_case(class_basename(get_class($this)), '-');
+        $type = Str::snake(class_basename(get_class($this)), '-');
 
         return ["type-{$type}"];
     }
@@ -429,10 +437,48 @@ abstract class AbstractField implements FieldInterface, ControlFieldInterface
     /**
      * @param RendererInterface $renderer
      *
-     * @return mixed|void
+     * @return void
      */
     public function beforeRender(RendererInterface $renderer)
     {
+        $this->trigger('before_render', $this, $renderer);
+
+        // TODO: Refactor
+        if($this instanceof NavigableInterface) {
+            // TODO: Calling before render is not a good idea, since it can be called multiple times
+            $this->navigator($this->getNavigator());
+        }
+    }
+
+    /**
+     * @return Navigator
+     */
+    protected function getNavigator(): Navigator
+    {
+        /** @var Page $page */
+        $page = app(LayoutManager::class)->getPage();
+
+        // TODO: Refactor
+        /** @var Form $form */
+        $form = $page->getLayouts()[0]->getForm();
+
+        return $form->getNavigator();
+    }
+    /**
+     * @param  RendererInterface  $renderer
+     * @param $contents
+     *
+     * @return mixed
+     */
+    public function afterRender(RendererInterface $renderer, $contents)
+    {
+        $this->trigger('after_render', $this, $renderer, $contents);
+
+        if($this instanceof NavigableInterface) {
+            return $this->getNavigator()->attachReference($this, $contents);
+        }
+
+        return $contents;
     }
 
     /**

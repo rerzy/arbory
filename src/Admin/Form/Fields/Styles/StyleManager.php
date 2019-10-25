@@ -2,6 +2,12 @@
 
 namespace Arbory\Base\Admin\Form\Fields\Styles;
 
+use Arbory\Base\Admin\Form;
+use Arbory\Base\Admin\Layout\LayoutManager;
+use Arbory\Base\Admin\Navigator\NavigableInterface;
+use Arbory\Base\Admin\Navigator\Navigator;
+use Arbory\Base\Admin\Page;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Foundation\Application;
 use Arbory\Base\Admin\Form\Fields\FieldInterface;
 use Arbory\Base\Admin\Form\Fields\Renderer\GenericRenderer;
@@ -11,10 +17,6 @@ use Arbory\Base\Admin\Form\Fields\Renderer\Styles\Options\StyleOptionsInterface;
 
 class StyleManager
 {
-    /**
-     * @var Application
-     */
-    protected $app;
 
     /**
      * @var \Illuminate\Support\Collection
@@ -25,19 +27,24 @@ class StyleManager
      * @var string
      */
     protected $defaultStyle;
+    
+    /**
+     * @var Container
+     */
+    protected $container;
 
     /**
      * StyleManager constructor.
      *
-     * @param Application $app
-     * @param array $styles
+     * @param  Container  $container
+     * @param  array  $styles
      * @param             $defaultStyle
      */
-    public function __construct(Application $app, array $styles, $defaultStyle)
+    public function __construct(Container $container, array $styles, ?string $defaultStyle)
     {
-        $this->app = $app;
         $this->styles = collect($styles);
         $this->defaultStyle = $defaultStyle;
+        $this->container = $container;
     }
 
     /**
@@ -74,9 +81,10 @@ class StyleManager
      */
     public function render(string $name, FieldInterface $field, ?StyleOptionsInterface $options = null)
     {
+
         if ($this->styles->has($name)) {
             /** @var FieldStyleInterface $style */
-            $style = $this->app->make(
+            $style = $this->container->make(
                 $this->styles->get($name)
             );
 
@@ -91,8 +99,11 @@ class StyleManager
             }
 
             $field->beforeRender($renderer);
+            $contents = $style->render($renderer, $options);
+            $field->afterRender($renderer, $contents);
 
-            return $style->render($renderer, $options);
+
+            return $contents;
         } else {
             throw new \InvalidArgumentException("Unknown field style '{$name}'");
         }

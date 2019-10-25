@@ -2,27 +2,30 @@
 
 namespace Arbory\Base\Nodes\Admin\Form\Layout;
 
-use Arbory\Base\Admin\Constructor\ConstructorLayout;
-use Arbory\Base\Admin\Form\Layout;
-use Arbory\Base\Admin\Form\Layout as BaseFormLayout;
+use Arbory\Base\Admin\Form\OverviewLayout;
 use Arbory\Base\Admin\Form\Overview;
-use Arbory\Base\Admin\Form\Widgets\Controls;
-use Arbory\Base\Admin\Layout\Footer\Tools;
-use Arbory\Base\Admin\Layout\PanelLayout;
-use Arbory\Base\Admin\Layout\Transformers\AppendTransformer;
-use Arbory\Base\Admin\Layout\Transformers\WrapTransformer;
-use Arbory\Base\Admin\Layout\WrappableInterface;
-use Arbory\Base\Admin\Panels\FormPanel;
+use Arbory\Base\Admin\Layout\PageInterface;
 use Arbory\Base\Admin\Widgets\Breadcrumbs;
 use Arbory\Base\Nodes\Node;
 use Illuminate\Support\Collection;
 
-class FormLayout extends ConstructorLayout
+class FormLayout extends OverviewLayout
 {
     /**
      * @var Overview
      */
     protected $overview;
+
+
+    /**
+     * Executes when the layout is applied.
+     *
+     * @param PageInterface $page
+     */
+    public function applyToPage(PageInterface $page)
+    {
+        $page->setBreadcrumbs($this->breadcrumbs());
+    }
 
     /**
      * @return Breadcrumbs|null
@@ -50,52 +53,6 @@ class FormLayout extends ConstructorLayout
         return $breadcrumbs;
     }
 
-    public function contents($content)
-    {
-        /**
-         * @var WrappableInterface
-         */
-        $renderer = $this->form->getRenderer();
-
-        $renderer->setContent($content);
-
-        return $renderer;
-    }
-
-    /**
-     * @param  Overview  $overview
-     *
-     * @return FormLayout
-     */
-    public function setOverview(Overview $overview): FormLayout
-    {
-        $this->overview = $overview;
-
-        return $this;
-    }
-
-    public function overview()
-    {
-        return $this->overview->render();
-    }
-
-    public function build()
-    {
-        parent::build();
-
-        $this->use(
-            new AppendTransformer(
-                new Controls(new Tools(), $this->form->getModule()->url('index'))
-            )
-        );
-
-
-        $this->use(
-            new WrapTransformer(
-                (new FormPanel())->setForm($this->form)
-            )
-        );
-    }
 
     /**
      * @param  Node  $node

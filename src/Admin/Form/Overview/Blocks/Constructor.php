@@ -23,17 +23,17 @@ class Constructor extends Block implements Renderable
     /**
      * @var string
      */
-    private $constructorFieldName;
+    protected $constructorFieldName;
 
     /**
      * @var \Closure
      */
-    private $fieldConfigurator;
+    protected $fieldConfigurator;
 
     /**
      * @var ConstructorField
      */
-    private $field;
+    protected $field;
 
     /**
      * Constructor constructor.
@@ -53,11 +53,15 @@ class Constructor extends Block implements Renderable
     }
 
     /**
-     * @param string $id
+     * @param  string  $id
+     *
+     * @return Constructor
      */
-    public function setModalId(string $id)
+    public function setModalId(string $id): self
     {
         $this->modalId = $id;
+
+        return $this;
     }
 
     /**

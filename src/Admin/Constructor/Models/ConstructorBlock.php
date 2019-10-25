@@ -2,9 +2,10 @@
 
 namespace Arbory\Base\Admin\Constructor\Models;
 
+use Arbory\Base\Admin\Navigator\NavigableItemInterface;
 use Illuminate\Database\Eloquent\Model;
 
-class ConstructorBlock extends Model
+class ConstructorBlock extends Model implements NavigableItemInterface
 {
     /**
      * @var string
