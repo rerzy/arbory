@@ -31,10 +31,25 @@ export default class Navigator
 
         $(document).on('nestedfieldsitemadd', e => this.parseNestedItem($(e.target)));
         $(document).on('nestedfieldsremove', this.onFieldRemove.bind(this));
-        $(document).on('navigatoradd navigatorremove', e => {
-            console.info('Rebuilding navigator items');
+        $(document).on('sortableupdated', this.onSort.bind(this));
+        $(document).on('navigatoradd navigatorremove navigatorsort', e => {
             this.items = this.buildTreeFromList();
         });
+    }
+
+    onSort(e) {
+        const $container = $(e.target);
+        const children = $container.find('[data-navigator-reference]');
+
+        children.each((index, item) => {
+            const referenceNo = $(item).data('navigator-reference');
+            const navigatorItem = this.findByReference(referenceNo);
+            const targetList = navigatorItem.getListElement().parents('ul:first');
+            
+            navigatorItem.getListElement().insertBefore(targetList.find('> li').eq(index));
+        });
+
+        $(document).trigger('navigatorsort');
     }
 
     onNavigatorClick(e)

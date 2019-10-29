@@ -23,7 +23,7 @@ export class Viewport {
             }, 50)
         });
 
-        $(document).on('navigatoradd navigatorremove', e => {
+        $(document).on('navigatoradd navigatorremove navigatorsort', e => {
             this.addActiveState();
         });
     }
