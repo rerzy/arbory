@@ -137,6 +137,7 @@ class Constructor extends AbstractRelationField implements
         }
 
         $fieldSet = new FieldSet($model, $this->getNameSpacedName().'.'.$index);
+        $fieldSet->setIsTemplate($this->getFieldSet()->isTemplate());
 
         $fieldSet->hidden($model->getKeyName())
                  ->setValue($model->getKey());

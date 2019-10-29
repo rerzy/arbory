@@ -13,6 +13,8 @@ use Arbory\Base\Admin\Form\Fields\Renderer\RendererInterface;
  */
 interface FieldInterface
 {
+    public const TEMPLATE_INDEX = '_template_';
+
     /**
      * @return string
      */

@@ -37,6 +37,7 @@ class NavigatorReferencer
             return $contents;
         }
 
+
         if($contents instanceof Element) {
             $contents->addAttributes([
                 'data-navigator-reference' => $item->getReference()

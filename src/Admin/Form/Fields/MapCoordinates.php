@@ -91,6 +91,8 @@ class MapCoordinates extends AbstractField implements NestedFieldInterface, Rend
 
         $namespace = substr($namespace, 0, strrpos($namespace, '.'));
         $fieldSet = new FieldSet($fieldSet->getModel(), $namespace);
+        $fieldSet->setIsTemplate($this->getFieldSet()->isTemplate());
+
 
         $fieldSet->hidden($this->getName())
             ->addAttributes($this->getData())

@@ -18,7 +18,7 @@ class PaneledItemRenderer implements ItemInterface
 
     public function __invoke(FieldInterface $field, FieldSet $fieldSet, $index = null, array $parameters = [])
     {
-        $isTemplate = $index === '_template_';
+        $isTemplate = $index === FieldInterface::TEMPLATE_INDEX;
 
         $title = $parameters['title'] ?? '';
 

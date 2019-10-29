@@ -85,13 +85,11 @@ class ConstructorFieldRenderer implements RendererInterface
 
         $select->append(Html::option('--'));
 
-        foreach ($this->field->getTypes() as $type => $object) {
-            $fieldSet = $this->field->getRelationFieldSet($this->field->buildFromBlock($object), '_template_');
-
+        foreach ($this->getTemplates() as $name => $template) {
             $select->append(
-                Html::option($object->name())->setValue($type)->addAttributes(
+                Html::option($name)->setValue($name)->addAttributes(
                     [
-                        'data-template' => $this->getRelationItemHtml($object, $fieldSet, '_template_'),
+                        'data-template' => $template,
                     ]
                 )
             );
@@ -203,11 +201,11 @@ class ConstructorFieldRenderer implements RendererInterface
     {
         $templates = collect();
 
-
         foreach ($this->field->getTypes() as $type => $object) {
-            $fieldSet = $this->field->getRelationFieldSet($this->field->buildFromBlock($object), '_template_');
+            $fieldSet = $this->field->getRelationFieldSet($this->field->buildFromBlock($object), FieldInterface::TEMPLATE_INDEX);
+            $fieldSet->setIsTemplate(true);
 
-            $templates[$object->name()] = (string) $this->getRelationItemHtml($object, $fieldSet, '_template_');
+            $templates[$type] = (string) $this->getRelationItemHtml($object, $fieldSet, FieldInterface::TEMPLATE_INDEX);
         }
 
         return $templates;

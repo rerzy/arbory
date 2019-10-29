@@ -21,7 +21,10 @@ use Arbory\Base\Admin\Form\Fields\Renderer\RendererInterface;
 /**
  * Class AbstractField.
  */
-abstract class AbstractField implements FieldInterface, ControlFieldInterface
+abstract class AbstractField implements
+    FieldInterface,
+    ControlFieldInterface,
+    NavigableInterface
 {
     use IsTranslatable;
     use IsControlField;
@@ -86,6 +89,11 @@ abstract class AbstractField implements FieldInterface, ControlFieldInterface
      * @var bool
      */
     protected $hidden = false;
+
+    /**
+     * @var bool
+     */
+    protected $navigable = false;
 
     /**
      * AbstractField constructor.
@@ -444,7 +452,9 @@ abstract class AbstractField implements FieldInterface, ControlFieldInterface
         $this->trigger('before_render', $this, $renderer);
 
         // TODO: Refactor
-        if($this instanceof NavigableInterface) {
+        if($this instanceof NavigableInterface &&
+           $this->isNavigable() &&
+           ! $this->getFieldSet()->isTemplate()) {
             // TODO: Calling before render is not a good idea, since it can be called multiple times
             $this->navigator($this->getNavigator());
         }
@@ -473,8 +483,8 @@ abstract class AbstractField implements FieldInterface, ControlFieldInterface
     public function afterRender(RendererInterface $renderer, $contents)
     {
         $this->trigger('after_render', $this, $renderer, $contents);
-
-        if($this instanceof NavigableInterface) {
+        
+        if($this instanceof NavigableInterface && $this->isNavigable()) {
             return $this->getNavigator()->attachReference($this, $contents);
         }
 
@@ -499,5 +509,33 @@ abstract class AbstractField implements FieldInterface, ControlFieldInterface
         $this->hidden = $hidden;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNavigable(): bool
+    {
+        return $this->navigable;
+    }
+
+    /**
+     * @param  bool  $navigable
+     *
+     * @return FieldInterface
+     */
+    public function setNavigable(bool $navigable): FieldInterface
+    {
+        $this->navigable = $navigable;
+
+        return $this;
+    }
+
+    /**
+     * @param  Navigator  $navigator
+     */
+    public function navigator(Navigator $navigator): void
+    {
+        $navigator->addItem($this, $this->getLabel() ?? $this->getName());
     }
 }

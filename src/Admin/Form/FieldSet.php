@@ -83,6 +83,11 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
     protected $items;
 
     /**
+     * @var bool
+     */
+    protected $isTemplate = false;
+
+    /**
      * Resource constructor.
      *
      * @param Model $model
@@ -391,5 +396,25 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
         }
 
         return $this->items->__call($method, $parameters);
+    }
+
+    /**
+     * @param  bool  $isTemplate
+     *
+     * @return FieldSet
+     */
+    public function setIsTemplate(bool $isTemplate): FieldSet
+    {
+        $this->isTemplate = $isTemplate;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTemplate(): bool
+    {
+        return $this->isTemplate;
     }
 }

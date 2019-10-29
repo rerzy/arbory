@@ -41,6 +41,9 @@ class Panel implements PanelInterface, WrappableInterface, NavigableInterface
      */
     protected $toolbox;
 
+    /**
+     * @var bool 
+     */
     protected $navigable = true;
 
     /**

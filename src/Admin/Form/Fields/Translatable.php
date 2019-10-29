@@ -113,6 +113,8 @@ class Translatable extends AbstractField implements ProxyFieldInterface
             $this->getNameSpacedName().'.'.$locale
         );
 
+        $fieldSet->setIsTemplate($this->getFieldSet()->isTemplate());
+
         $field = clone $this->field;
         $field->setFieldSet($fieldSet);
         $field->rules(implode('|', $this->rules));
