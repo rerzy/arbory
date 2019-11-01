@@ -2,6 +2,8 @@
 
 namespace Arbory\Base\Admin\Form\Fields;
 
+use Arbory\Base\Html\Elements\Element;
+
 interface RenderOptionsInterface
 {
     /**
@@ -67,4 +69,11 @@ interface RenderOptionsInterface
      * @return array
      */
     public function getClasses(): array;
+
+    /**
+     * @param self|Element $element
+     *
+     * @return mixed
+     */
+    public function applyRenderOptions($element);
 }

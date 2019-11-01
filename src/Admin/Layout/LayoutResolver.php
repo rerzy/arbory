@@ -30,7 +30,7 @@ class LayoutResolver
      */
     protected $handler;
 
-    /**                                                                     c
+    /**
      * @var array
      */
     protected $slots;

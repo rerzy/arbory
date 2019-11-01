@@ -3,6 +3,8 @@
 namespace Arbory\Base\Admin\Form\Fields\Concerns;
 
 use Arbory\Base\Admin\Form\Fields\RenderOptionsInterface;
+use Arbory\Base\Html\Elements\Element;
+use Illuminate\Support\Arr;
 
 trait HasRenderOptions
 {
@@ -85,7 +87,7 @@ trait HasRenderOptions
      */
     public function setClasses($classes): RenderOptionsInterface
     {
-        $this->classes = array_wrap($classes);
+        $this->classes = Arr::wrap($classes);
 
         return $this;
     }
@@ -97,7 +99,7 @@ trait HasRenderOptions
      */
     public function removeClasses($classes): RenderOptionsInterface
     {
-        $classes = array_wrap($classes);
+        $classes = Arr::wrap($classes);
 
         $this->classes = array_filter($this->classes, function ($value) use ($classes) {
             return ! in_array($value, $classes, true);
@@ -140,5 +142,34 @@ trait HasRenderOptions
         $this->wrapper = $value;
 
         return $this;
+    }
+
+    /**
+     * @param  Element|RenderOptionsInterface  $renderable
+     *
+     * @return Element|RenderOptionsInterface
+     */
+    public function applyRenderOptions($element)
+    {
+        $classes = implode(' ', $this->getClasses());
+
+        if($element instanceof RenderOptionsInterface) {
+            $element->addAttributes($this->getAttributes());
+            $element->addClass($classes);
+            $element->setWrapper($this->getWrapper());
+
+            return $element;
+        }
+
+        if($element instanceof Element) {
+            $element->addAttributes($this->getAttributes());
+            $element->addClass($classes);
+
+            $wrapper = $this->getWrapper();
+
+            return $wrapper ? $wrapper($element) : $element;
+        }
+
+        return $element;
     }
 }

@@ -34,9 +34,6 @@ class NestedFieldStyle extends AbstractFieldStyle implements FieldStyleInterface
                 'data-name' => $field->getName(),
             ]);
 
-        $section->addAttributes($options->getAttributes());
-        $section->addClass(implode(' ', $options->getClasses()));
-
         if ($field instanceof ControlFieldInterface) {
             if ($field->isDisabled()) {
                 $section->addAttributes(['data-disabled' => 1]);
@@ -46,6 +43,6 @@ class NestedFieldStyle extends AbstractFieldStyle implements FieldStyleInterface
             $section->addAttributes(['data-required' => (int) $field->isRequired()]);
         }
 
-        return $section;
+        return $options->applyRenderOptions($section);
     }
 }

@@ -10,6 +10,12 @@ use Arbory\Base\Admin\Form\Fields\Renderer\Styles\Options\StyleOptionsInterface;
 
 class LabeledFieldStyle extends AbstractFieldStyle implements FieldStyleInterface
 {
+    /**
+     * @param  RendererInterface  $renderer
+     * @param  StyleOptionsInterface  $options
+     *
+     * @return \Arbory\Base\Html\Elements\Element|mixed
+     */
     public function render(RendererInterface $renderer, StyleOptionsInterface $options)
     {
         $field = $renderer->getField();
@@ -18,8 +24,6 @@ class LabeledFieldStyle extends AbstractFieldStyle implements FieldStyleInterfac
         $template = Html::div()->addClass('field');
         $template->addClass(implode(' ', $field->getFieldClasses()));
 
-        $template->addAttributes($options->getAttributes());
-        $template->addClass(implode(' ', $options->getClasses()));
 
         if ($name = $field->getName()) {
             $template->addAttributes(
@@ -41,9 +45,15 @@ class LabeledFieldStyle extends AbstractFieldStyle implements FieldStyleInterfac
         $template->append($this->buildLabel($field, $inputId));
         $template->append(Html::div($this->renderField($field))->addClass('value'));
 
-        return $template;
+        return $options->applyRenderOptions($template);
     }
 
+    /**
+     * @param  FieldInterface  $field
+     * @param $inputId
+     *
+     * @return \Arbory\Base\Html\Elements\Element
+     */
     protected function buildLabel(FieldInterface $field, $inputId)
     {
         $element = Html::div()->addClass('label-wrap');

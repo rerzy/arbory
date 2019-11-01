@@ -18,7 +18,7 @@ class PaneledItemRenderer implements ItemInterface
 
     public function __invoke(FieldInterface $field, FieldSet $fieldSet, $index = null, array $parameters = [])
     {
-        $isTemplate = $index === FieldInterface::TEMPLATE_INDEX;
+        $isTemplate = $fieldSet->isTemplate();
 
         $title = $parameters['title'] ?? '';
 
@@ -49,6 +49,8 @@ class PaneledItemRenderer implements ItemInterface
         $this->addRemoveButton($field, $panel, $content, $fieldSet->getNamespace().'._destroy');
 
         $panel->setContent($content);
+
+        $this->applyRenderOptions($panel);
 
         return $panel->render();
     }

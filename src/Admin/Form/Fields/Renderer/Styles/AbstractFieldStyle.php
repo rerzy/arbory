@@ -7,6 +7,11 @@ use Arbory\Base\Admin\Form\Fields\RenderOptionsInterface;
 
 abstract class AbstractFieldStyle
 {
+    /**
+     * @param  FieldInterface  $field
+     *
+     * @return mixed
+     */
     protected function renderField(FieldInterface $field)
     {
         $content = $field->render();
