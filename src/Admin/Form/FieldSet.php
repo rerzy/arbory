@@ -188,7 +188,10 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
         return $this->model;
     }
 
-    public function getRules()
+    /**
+     * @return array
+     */
+    public function getRules(): array
     {
         $rules = [];
 
@@ -235,6 +238,23 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
         $field->setFieldSet($this);
 
         $this->items->offsetSet($key, $field);
+    }
+
+    /**
+     * @param  FieldInterface  $existingField
+     * @param  FieldInterface  $newField
+     *
+     * @return $this
+     */
+    public function overwrite(FieldInterface $existingField, FieldInterface $newField): self
+    {
+        foreach ($this->items as $key => $field) {
+            if($existingField === $field) {
+                $this->items[$key] = $newField;
+            }
+        }
+
+        return $this;
     }
 
     /**
