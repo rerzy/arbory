@@ -12,7 +12,7 @@ interface NavigableInterface extends NavigableItemInterface
     /**
      * @param  Navigator  $navigator
      *
-     * @return mixed
+     * @return Item|null
      */
-    public function navigator(Navigator $navigator): void;
+    public function registerNavigatorItem(Navigator $navigator): ?Item;
 }

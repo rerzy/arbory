@@ -4,6 +4,7 @@ namespace Arbory\Base\Admin\Panels;
 
 use Arbory\Base\Admin\Form;
 use Arbory\Base\Admin\Layout\LayoutManager;
+use Arbory\Base\Admin\Navigator\Item;
 use Arbory\Base\Admin\Navigator\NavigableItemInterface;
 use Arbory\Base\Admin\Page;
 use Arbory\Base\Admin\Tools\Toolbox;
@@ -180,7 +181,7 @@ class Panel implements PanelInterface, WrappableInterface, NavigableInterface
         }
 
         $navigator = $form->getNavigator();
-        $this->navigator($navigator);
+        $this->registerNavigatorItem($navigator);
 
         return $navigator->attachReference($this->navigableItem ?: $this, $contents);
     }
@@ -200,13 +201,15 @@ class Panel implements PanelInterface, WrappableInterface, NavigableInterface
     /**
      * @param  Navigator  $navigator
      *
-     * @return void
+     * @return Item|null
      */
-    public function navigator(Navigator $navigator): void
+    public function registerNavigatorItem(Navigator $navigator): ?Item
     {
         if(! $this->navigableItem) {
-            $navigator->addItem($this, $this->getTitle());
+            return $navigator->addItem($this, $this->getTitle());
         }
+        
+        return null;
     }
 
     /**

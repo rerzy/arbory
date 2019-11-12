@@ -4,6 +4,7 @@ namespace Arbory\Base\Admin\Form\Fields;
 
 use Arbory\Base\Admin\Form;
 use Arbory\Base\Admin\Layout\LayoutManager;
+use Arbory\Base\Admin\Navigator\Item as NavigatorItem;
 use Arbory\Base\Admin\Navigator\NavigableInterface;
 use Arbory\Base\Admin\Navigator\Navigator;
 use Arbory\Base\Admin\Page;
@@ -456,7 +457,7 @@ abstract class AbstractField implements
            $this->isNavigable() &&
            ! $this->getFieldSet()->isTemplate()) {
             // TODO: Calling before render is not a good idea, since it can be called multiple times
-            $this->navigator($this->getNavigator());
+            $this->registerNavigatorItem($this->getNavigator());
         }
     }
 
@@ -533,9 +534,11 @@ abstract class AbstractField implements
 
     /**
      * @param  Navigator  $navigator
+     *
+     * @return NavigatorItem|null
      */
-    public function navigator(Navigator $navigator): void
+    public function registerNavigatorItem(Navigator $navigator): ?NavigatorItem
     {
-        $navigator->addItem($this, $this->getLabel() ?? $this->getName());
+        return $navigator->addItem($this, $this->getLabel() ?? $this->getName());
     }
 }

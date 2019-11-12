@@ -3,7 +3,7 @@
 namespace Arbory\Base\Admin\Form\Fields;
 
 use Arbory\Base\Admin\Form\Fields\Renderer\Nested\PaneledItemRenderer;
-use Arbory\Base\Admin\Navigator\Item;
+use Arbory\Base\Admin\Navigator\Item as NavigatorItem;
 use Arbory\Base\Admin\Navigator\NavigableInterface;
 use Arbory\Base\Admin\Navigator\Navigator;
 use Closure;
@@ -463,9 +463,9 @@ class Constructor extends AbstractRelationField implements
     /**
      * @param  Navigator  $navigator
      *
-     * @return mixed
+     * @return NavigatorItem
      */
-    public function navigator(Navigator $navigator): void
+    public function registerNavigatorItem(Navigator $navigator): NavigatorItem
     {
         $parentItem = $navigator->addItem($this, 'Constructor');
         $registry = $this->getRegistry();
@@ -476,8 +476,10 @@ class Constructor extends AbstractRelationField implements
             $blockType = $registry->resolve($block->name);
 
             if($blockType) {
-                $parentItem->addChild(new Item($block, $blockType->title()));
+                $parentItem->addChild(new NavigatorItem($block, $blockType->title()));
             }
         }
+
+        return $parentItem;
     }
 }
