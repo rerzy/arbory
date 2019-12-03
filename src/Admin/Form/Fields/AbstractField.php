@@ -2,6 +2,7 @@
 
 namespace Arbory\Base\Admin\Form\Fields;
 
+use Illuminate\Support\Str;
 use Arbory\Base\Admin\Form;
 use Arbory\Base\Admin\Layout\LayoutManager;
 use Arbory\Base\Admin\Navigator\Item as NavigatorItem;
@@ -9,7 +10,6 @@ use Arbory\Base\Admin\Navigator\NavigableInterface;
 use Arbory\Base\Admin\Navigator\Navigator;
 use Arbory\Base\Admin\Page;
 use Arbory\Base\Admin\Traits\EventDispatcher;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Arbory\Base\Admin\Form\FieldSet;
@@ -484,7 +484,7 @@ abstract class AbstractField implements
     public function afterRender(RendererInterface $renderer, $contents)
     {
         $this->trigger('after_render', $this, $renderer, $contents);
-        
+
         if($this instanceof NavigableInterface && $this->isNavigable()) {
             return $this->getNavigator()->attachReference($this, $contents);
         }
