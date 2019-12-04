@@ -21,10 +21,6 @@
         "laravelcollective/html": "^6.0",
         "doctrine/dbal": "^2.5",
         "baum/baum": "2.0.0-alpha1",
-        "components/jquery": "^3.2",
-        "components/jqueryui": "1.12.*",
-        "components/jquery-cookie": "1.4.*",
-        "ckeditor/ckeditor": "^4.5",
         "alsofronie/eloquent-uuid": "^1.0.5",
         "astrotomic/laravel-translatable": "^11.5",
         "waavi/translation": "^2.4",
@@ -73,9 +69,9 @@
             "dont-discover": [
                 "cartalyst/sentinel"
             ]
+        },
+        "extra": {
+            "foxy": true
         }
-    },
-    "config": {
-        "component-dir": "vendor/components"
     }
 }
