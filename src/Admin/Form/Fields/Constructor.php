@@ -2,6 +2,10 @@
 
 namespace Arbory\Base\Admin\Form\Fields;
 
+use Arbory\Base\Admin\Form\Fields\Renderer\Nested\PaneledItemRenderer;
+use Arbory\Base\Admin\Navigator\Item as NavigatorItem;
+use Arbory\Base\Admin\Navigator\NavigableInterface;
+use Arbory\Base\Admin\Navigator\Navigator;
 use Closure;
 use Illuminate\Http\Request;
 use Arbory\Base\Admin\Form\FieldSet;
@@ -20,7 +24,8 @@ use Illuminate\Support\Arr;
 class Constructor extends AbstractRelationField implements
     NestedFieldInterface,
     RepeatableNestedFieldInterface,
-    RenderOptionsInterface
+    RenderOptionsInterface,
+    NavigableInterface
 {
     use HasRenderOptions;
     use HasRelationships;
@@ -86,9 +91,9 @@ class Constructor extends AbstractRelationField implements
     }
 
     /**
-     * @return BlockRegistry|\Illuminate\Foundation\Application|mixed
+     * @return BlockRegistry
      */
-    public function getRegistry()
+    public function getRegistry(): BlockRegistry
     {
         return $this->registry;
     }
@@ -133,6 +138,7 @@ class Constructor extends AbstractRelationField implements
         }
 
         $fieldSet = new FieldSet($model, $this->getNameSpacedName().'.'.$index);
+        $fieldSet->setIsTemplate($this->getFieldSet()->isTemplate());
 
         $fieldSet->hidden($model->getKeyName())
                  ->setValue($model->getKey());
@@ -427,5 +433,54 @@ class Constructor extends AbstractRelationField implements
         $this->allowToAdd = $allowToAdd;
 
         return $this;
+    }
+
+    /**
+     * Format as panels
+     *
+     * @return $this
+     */
+    public function asPanels(): self
+    {
+        $this->setItemRenderer(new PaneledItemRenderer);
+        $this->addClass('in-layout');
+        $this->sortable();
+
+        $this->setHidden(true);
+        $this->setLabel('');
+        $this->setAllowToAdd(false);
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNavigable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param  Navigator  $navigator
+     *
+     * @return NavigatorItem
+     */
+    public function registerNavigatorItem(Navigator $navigator): NavigatorItem
+    {
+        $parentItem = $navigator->addItem($this, 'Constructor');
+        $registry = $this->getRegistry();
+
+        foreach($this->getValue() as $block) {
+            /** @var $block ConstructorBlock */
+
+            $blockType = $registry->resolve($block->name);
+
+            if($blockType) {
+                $parentItem->addChild(new NavigatorItem($block, $blockType->title()));
+            }
+        }
+
+        return $parentItem;
     }
 }

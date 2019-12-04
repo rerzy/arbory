@@ -28,6 +28,7 @@ trait HasNestedFieldSet
     public function getNestedFieldSet($model)
     {
         $fieldSet = new FieldSet($model, $this->getNamespacedName());
+        $fieldSet->setIsTemplate($this->getFieldSet()->isTemplate());
 
         return $this->configureFieldSet($fieldSet);
     }

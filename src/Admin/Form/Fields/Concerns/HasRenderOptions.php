@@ -3,6 +3,7 @@
 namespace Arbory\Base\Admin\Form\Fields\Concerns;
 
 use Arbory\Base\Admin\Form\Fields\RenderOptionsInterface;
+use Arbory\Base\Html\Elements\Element;
 use Illuminate\Support\Arr;
 
 trait HasRenderOptions
@@ -141,5 +142,34 @@ trait HasRenderOptions
         $this->wrapper = $value;
 
         return $this;
+    }
+
+    /**
+     * @param  Element|RenderOptionsInterface  $renderable
+     *
+     * @return Element|RenderOptionsInterface
+     */
+    public function applyRenderOptions($element)
+    {
+        $classes = implode(' ', $this->getClasses());
+
+        if($element instanceof RenderOptionsInterface) {
+            $element->addAttributes($this->getAttributes());
+            $element->addClass($classes);
+            $element->setWrapper($this->getWrapper());
+
+            return $element;
+        }
+
+        if($element instanceof Element) {
+            $element->addAttributes($this->getAttributes());
+            $element->addClass($classes);
+
+            $wrapper = $this->getWrapper();
+
+            return $wrapper ? $wrapper($element) : $element;
+        }
+
+        return $element;
     }
 }

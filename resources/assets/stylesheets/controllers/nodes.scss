@@ -190,6 +190,15 @@
                 overflow-y: auto;
             }
         }
+    
+        &.status {
+            width: steps(52);
+        
+            .body {
+                padding: steps(1) steps(2) steps(3) steps(2);
+                height: auto;
+            }
+        }
     }
 
     &.view-edit

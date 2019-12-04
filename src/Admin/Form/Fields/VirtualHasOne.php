@@ -34,10 +34,7 @@ class VirtualHasOne extends HasOne
         $item = $this->getValue();
         $model = $this->getModel();
 
-        $block = Html::div()
-                     ->addClass('section content-fields')
-                     ->addAttributes($this->getAttributes())
-                     ->addClass(implode(' ', $this->getClasses()));
+        $block = Html::div()->addClass('section content-fields');
 
         $fieldSet = $this->getRelationFieldSet($model);
 
@@ -51,7 +48,7 @@ class VirtualHasOne extends HasOne
             $fieldSet->render()
         );
 
-        return $block;
+        return $this->applyRenderOptions($block);
     }
 
     /**

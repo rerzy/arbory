@@ -2,30 +2,33 @@
 
 namespace Arbory\Base\Http\Controllers\Admin;
 
-use Arbory\Base\Admin\Constructor\BlockRegistry;
 use Arbory\Base\Admin\Form;
-use Arbory\Base\Admin\Form\Fields\Deactivator;
-use Arbory\Base\Admin\Form\FieldSet;
 use Arbory\Base\Admin\Grid;
-use Arbory\Base\Admin\Layout;
-use Arbory\Base\Admin\Layout\LayoutInterface;
-use Arbory\Base\Admin\Layout\LayoutManager;
 use Arbory\Base\Admin\Page;
-use Arbory\Base\Admin\Tools\ToolboxMenu;
+use Arbory\Base\Nodes\Admin\Form\Layout\FormLayout;
+use Arbory\Base\Nodes\Node;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Arbory\Base\Admin\Layout;
+use Illuminate\Routing\Controller;
+use Illuminate\Container\Container;
+use Arbory\Base\Admin\Form\FieldSet;
 use Arbory\Base\Admin\Traits\Crudify;
+use Illuminate\Http\RedirectResponse;
 use Arbory\Base\Html\Elements\Content;
+use Arbory\Base\Admin\Tools\ToolboxMenu;
 use Arbory\Base\Nodes\Admin\Grid\Filter;
 use Arbory\Base\Nodes\Admin\Grid\Renderer;
-use Arbory\Base\Nodes\ContentTypeDefinition;
 use Arbory\Base\Nodes\ContentTypeRegister;
-use Arbory\Base\Nodes\Node;
-use Arbory\Base\Repositories\NodesRepository;
-use Illuminate\Support\Str;
+use Arbory\Base\Admin\Layout\LayoutManager;
+use Arbory\Base\Nodes\ContentTypeDefinition;
 use Arbory\Base\Support\Nodes\NameGenerator;
-use Illuminate\Container\Container;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Arbory\Base\Admin\Layout\LayoutInterface;
+use Arbory\Base\Repositories\NodesRepository;
+use Arbory\Base\Admin\Form\Fields\Deactivator;
+use Arbory\Base\Admin\Constructor\BlockRegistry;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class NodesController extends Controller
 {
@@ -56,6 +59,29 @@ class NodesController extends Controller
     }
 
     /**
+     * @param Model $model
+     * @param Layout\FormLayoutInterface|null $layout
+     *
+     * @return Form
+     */
+    protected function buildForm(Model $model, ?Layout\FormLayoutInterface $layout = null)
+    {
+        $form = new Form($model);
+        $form->setModule($this->module());
+        $form->setRenderer(new Form\Builder($form));
+
+
+        if ($layout) {
+            $layout->setForm($form);
+
+            $layout->setOverview($this->makeOverview($form, $layout));
+        }
+
+        return $this->form($form, $layout) ?: $form;
+    }
+
+
+    /**
      * @param Form            $form
      * @param LayoutInterface $layout
      *
@@ -76,12 +102,6 @@ class NodesController extends Controller
             $fields->text('meta_author');
             $fields->text('meta_keywords');
             $fields->text('meta_description');
-            $fields->dateTime('activate_at');
-            $fields->dateTime('expire_at')->rules('nullable|after_or_equal:resource.activate_at');
-
-            if ($fields->getModel()->active) {
-                $fields->add(new Deactivator('deactivate'));
-            }
 
             $fields->hasOne('content', $this->contentResolver($definition, $layout));
         });
@@ -346,6 +366,36 @@ class NodesController extends Controller
      */
     protected function makeNameFromType($type): string
     {
-        return $this->container->get(NameGenerator::class)->generate($type);
+        return app(NameGenerator::class)->generate($type);
+    }
+
+    /**
+     * @param Form $form
+     * @return Form\Overview
+     */
+    private function makeOverview(Form $form, ?Form\OverviewLayout $layout = null)
+    {
+        $overview = $layout->getOverview();
+
+        $definition = $this->resolveContentDefinition($form);
+
+        if ($definition->hasOverviewHandler()) {
+            $definition->getOverviewHandler()->call($this, $overview, $layout);
+        }
+
+        return $overview;
+    }
+
+    /**
+     * Defined layouts.
+     *
+     * @return array
+     */
+    public function layouts()
+    {
+        return [
+            'grid' => Grid\Layout::class,
+            'form' => FormLayout::class,
+        ];
     }
 }

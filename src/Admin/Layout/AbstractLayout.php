@@ -12,10 +12,10 @@ abstract class AbstractLayout
 {
     use EventDispatcher;
 
-    const EVENT_APPLY = 'apply';
-    const EVENT_RENDER = 'render';
+    public const EVENT_APPLY = 'apply';
+    public const EVENT_RENDER = 'render';
 
-    const SLOTS = [];
+    public const SLOTS = [];
 
     /**
      * @var Slot
@@ -111,7 +111,15 @@ abstract class AbstractLayout
         ]);
     }
 
-    public function apply(Body $body, Closure $next, array ...$parameters)
+    /**
+     * @param  Body  $body
+     * @param  Closure  $next
+     *
+     * @param  array  $parameters
+     *
+     * @return mixed
+     */
+    public function apply(Body $body, Closure $next, ...$parameters)
     {
         $this->trigger('apply', $body);
 
@@ -121,8 +129,7 @@ abstract class AbstractLayout
                 $this->setContent($content);
 
                 return $this->render();
-            },
-            $this->manager()->getPage()
+            }
         );
 
         return $next($body);
@@ -153,11 +160,11 @@ abstract class AbstractLayout
      */
     public function transform($content)
     {
-        if (count($this->getPipes())) {
+        if (count($this->getLayouts())) {
             return $this->pipeline()
                         ->send($content)
                         ->then(
-                            function ($content) {
+                            static function ($content) {
                                 return $content;
                             }
                         );
@@ -179,7 +186,7 @@ abstract class AbstractLayout
 
         return $this->pipeline
             ->via('apply')
-            ->through($this->getPipes());
+            ->through($this->getLayouts());
     }
 
     /**
@@ -209,7 +216,7 @@ abstract class AbstractLayout
     /**
      * @return LayoutInterface[]
      */
-    protected function getPipes(): array
+    public function getLayouts(): array
     {
         return $this->layouts;
     }

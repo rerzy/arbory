@@ -1,0 +1,118 @@
+section.overview {
+    flex: 0 0 steps(25);
+    margin-left: steps(1.5);
+    position: sticky;
+    top: 0;
+    
+    > header {
+        @include section-header;
+        @include clear-inside;
+        
+        margin-top: steps(2);
+        
+        h1 {
+            @include heading-text;
+        }
+    }
+    
+    &:not(.nested):not(.dialog) .body {
+        background: $color-background-lightest;
+        border-width: 1px 1px 1px 1px;
+        border-style: solid;
+        border-color: $color-border-normal;
+    }
+    
+    .status {
+        
+        .fields {
+            display: none;
+        }
+    }
+    
+    .block {
+        padding: steps(2) steps(1.5) steps(1.5) steps(1.5);
+        border-bottom: 1px solid #DDDDDD;
+        
+        &.navigation {
+            padding-top: steps(1.5);
+            padding-bottom: 0;
+        }
+        
+        &.constructor {
+            padding: steps(1);
+        }
+    }
+    
+    .display {
+        display: flex;
+        line-height: steps(1.5);
+        
+        .options {
+            margin-left: steps(0.5);
+        }
+        
+        .icon {
+            margin-left: steps(1.5);
+        }
+        
+        .list {
+            margin-bottom: steps(0.5);
+        }
+        
+        .option {
+            font-weight: bold;
+            display: none;
+            
+            &.selected {
+                display: block;
+            }
+        }
+    }
+    
+    .navigation {
+        ul {
+            list-style: none inside;
+            padding: 0;
+            margin: 0;
+        }
+        
+        a {
+            display: block;
+            color: #5597E4;
+            text-decoration: none;
+            margin-bottom: steps(1.5);
+            line-height: 15px;
+        }
+        
+        li.active > a {
+            font-weight: bold;
+        }
+        
+        .children {
+            margin-left: steps(2);
+        }
+    }
+    
+    .constructor {
+        > .button {
+            border: 1px solid #EEEEEE;
+            border-radius: 6px;
+            background-color: $color-background-lightest;
+            box-shadow: 0 1px 2px 0 rgba(196, 196, 196, 0.5);
+            
+            color: #3F3F3F;
+            font-size: 13px;
+            letter-spacing: 0.73px;
+            line-height: 20px;
+            width: 100%;
+            padding: steps(1);
+            display: flex;
+            align-content: center;
+            justify-content: center;
+            
+            .fa {
+                margin-right: steps(1.5);
+            }
+        }
+    }
+}

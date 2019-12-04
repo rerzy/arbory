@@ -2,6 +2,7 @@
 
 namespace Arbory\Base\Admin;
 
+use Arbory\Base\Admin\Navigator\Navigator;
 use Illuminate\Http\Request;
 use Arbory\Base\Content\Relation;
 use Arbory\Base\Admin\Form\FieldSet;
@@ -58,6 +59,11 @@ class Form
     protected $namespace = 'resource';
 
     /**
+     * @var Navigator
+     */
+    protected $navigator;
+
+    /**
      * Form constructor.
      *
      * @param Model $model
@@ -69,6 +75,7 @@ class Form
         $this->namespace = $namespace;
         $this->fields = new FieldSet($model, $this->namespace, app(StyleManager::class));
         $this->validator = app(Validator::class);
+        $this->navigator = new Navigator();
 
         $this->registerEventListeners();
     }
@@ -259,5 +266,25 @@ class Form
                 }
             }
         );
+    }
+
+    /**
+     * @param  Navigator  $navigator
+     *
+     * @return Form
+     */
+    public function setNavigator(Navigator $navigator): Form
+    {
+        $this->navigator = $navigator;
+
+        return $this;
+}
+
+    /**
+     * @return Navigator
+     */
+    public function getNavigator(): Navigator
+    {
+        return $this->navigator;
     }
 }

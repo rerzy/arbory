@@ -1,92 +1,58 @@
-section
-{
+section {
     position: relative;
-
-    header h1
-    {
+    
+    header h1 {
         @include heading-text;
     }
-
-    > form .body
-    {
+    
+    > form .body {
         padding-bottom: steps(1);
     }
-
+    
 }
 
 section.nested,
 section:not(.nested) > .body,
-section > form > .body
-{
+section > form > .body {
     @include clear-inside;
 }
 
 section:not(.nested),
-section > form
-{
-    > header
-    {
-        @include section-header;
-        @include clear-inside;
-
-        margin-top: steps(2);
-
-        h1
-        {
-            float: left;
-        }
-
-        .extras
-        {
-            float: right;
-
-            &:not(.only-text)
-            {
-                margin: steps(-0.5) steps(-2) steps(-0.5) 0;
-            }
-        }
+section > form {
+    > header {
+        @include panel-header;
     }
-
+    
 }
 
 section:not(.nested):not(.dialog),
-section:not(.dialog) > form
-{
-    > .body
-    {
-        border-width: 0 1px 1px 1px;
-        border-style: solid;
-        border-color: $color-border-normal;
-        margin-bottom: -1px;
+section:not(.dialog) > form {
+    > .body {
+        @include panel-body;
     }
 }
 
-section.nested
-{
+section.nested {
     clear: both;
     padding: steps(1) steps(2);
-
-    h1
-    {
+    
+    h1 {
         margin-bottom: steps(1);
     }
-
-    .body
-    {
+    
+    .body {
         padding-bottom: 0;
     }
-
-    .list
-    {
-        fieldset.item
-        {
+    
+    .list {
+        fieldset.item {
             border: 1px solid $color-border-normal;
             margin: 0 0 steps(2) 0;
             padding-bottom: steps(3);
             position: relative;
             background: $color-background-lightest;
             @include clear-inside;
-    
+            
             &:not(.with-title) {
                 padding-top: steps(3);
             }
@@ -97,25 +63,22 @@ section.nested
                 line-height: steps(3);
             }
         }
-
+        
         .link-body > fieldset {
             border: none;
             margin-bottom: 0;
             padding-top: 0;
             padding-bottom: 0;
         }
-
-        .item.template
-        {
+        
+        .item.template {
             display: none;
         }
-
-        &[data-sortable] .item
-        {
+        
+        &[data-sortable] .item {
             padding-top: steps(3);
-
-            .handle
-            {
+            
+            .handle {
                 position: absolute;
                 background: $color-background-darker;
                 height: steps(3);
@@ -124,28 +87,27 @@ section.nested
                 top: 0;
                 cursor: pointer;
             }
-
+            
         }
-
+        
     }
-
+    
     .sortable-navigation:not(.button) {
         position: absolute;
         right: steps(3);
         top: 0;
         width: auto;
         display: none;
-
+        
         .button {
             float: left;
         }
     }
-
-    .remove-item-box
-    {
+    
+    .remove-item-box {
         position: absolute;
         right: 0;
-        top:   0;
+        top: 0;
         width: auto;
     }
     

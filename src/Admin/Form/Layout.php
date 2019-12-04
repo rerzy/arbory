@@ -51,7 +51,7 @@ class Layout extends AbstractLayout implements FormLayoutInterface
     }
 
     /**
-     * @return mixed
+     * @return Form
      */
     public function getForm()
     {

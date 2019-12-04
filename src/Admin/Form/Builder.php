@@ -30,9 +30,14 @@ class Builder implements Renderable, WrappableInterface
     protected $content;
 
     /**
+     * @var Overview
+     */
+    protected $overview;
+
+    /**
      * Builder constructor.
      *
-     * @param Form $form
+     * @param  Form  $form
      */
     public function __construct(Form $form)
     {
@@ -41,7 +46,7 @@ class Builder implements Renderable, WrappableInterface
 
     /**
      * @param       $route
-     * @param array $parameters
+     * @param  array  $parameters
      *
      * @return string
      */
@@ -76,9 +81,9 @@ class Builder implements Renderable, WrappableInterface
 
         if ($returnUrl = $this->form->getReturnUrl()) {
             $form->append(Html::input()
-                ->setName(Form::INPUT_RETURN_URL)
-                ->setValue($returnUrl)
-                ->setType('hidden')
+                              ->setName(Form::INPUT_RETURN_URL)
+                              ->setValue($returnUrl)
+                              ->setType('hidden')
             );
         }
 
@@ -94,7 +99,7 @@ class Builder implements Renderable, WrappableInterface
         $content->append(new Content($this->getContent()));
 
         return $this->form()
-            ->append($content);
+                    ->append($content);
     }
 
     /**
@@ -106,7 +111,7 @@ class Builder implements Renderable, WrappableInterface
     }
 
     /**
-     * @param mixed $content
+     * @param  mixed  $content
      *
      * @return Builder
      */
@@ -126,13 +131,25 @@ class Builder implements Renderable, WrappableInterface
     }
 
     /**
-     * @param string|null $id
+     * @param  string|null  $id
      *
      * @return Builder
      */
     public function setId(?string $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @param  Overview  $overview
+     *
+     * @return Builder
+     */
+    public function setOverview(Overview $overview): Builder
+    {
+        $this->overview = $overview;
 
         return $this;
     }

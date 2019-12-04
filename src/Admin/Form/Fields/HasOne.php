@@ -27,16 +27,13 @@ class HasOne extends AbstractRelationField implements RenderOptionsInterface
     {
         $item = $this->getValue() ?: $this->getRelatedModel();
 
-        $block = Html::div()
-                     ->addClass('section content-fields')
-                     ->addAttributes($this->getAttributes())
-                     ->addClass(implode(' ', $this->getClasses()));
+        $block = Html::div()->addClass('section content-fields');
 
         $block->append(
             $this->getRelationFieldSet($item)->render()
         );
 
-        return $block;
+        return $this->applyRenderOptions($block);
     }
 
     /**

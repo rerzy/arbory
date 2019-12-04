@@ -44,7 +44,7 @@ class Body
 
         $this->prepended = new Content();
         $this->appended = new Content();
-        $this->wrapper = function ($content) {
+        $this->wrapper = static function ($content) {
             return $content;
         };
     }
@@ -58,10 +58,12 @@ class Body
      */
     public function wrap(callable $wrapper): self
     {
-        $call = $this->wrapper;
+        $outerWrapper = $this->wrapper;
 
-        $this->wrapper = function ($content) use ($call, $wrapper) {
-            return $call($wrapper($content));
+        $this->wrapper = static function ($content) use ($outerWrapper, $wrapper) {
+            return $outerWrapper(
+                $wrapper($content)
+            );
         };
 
         return $this;

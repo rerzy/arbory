@@ -122,9 +122,10 @@ class NestedFieldRenderer implements RendererInterface
      */
     protected function getRelationFromTemplate()
     {
-        $fieldSet = $this->field->getRelationFieldSet($this->field->getRelatedModel(), '_template_');
+        $fieldSet = $this->field->getRelationFieldSet($this->field->getRelatedModel(), FieldInterface::TEMPLATE_INDEX);
+        $fieldSet->setIsTemplate(true);
 
-        return $this->getRelationItemHtml($fieldSet, '_template_');
+        return $this->getRelationItemHtml($fieldSet, FieldInterface::TEMPLATE_INDEX);
     }
 
     /**

@@ -84,6 +84,11 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
     protected $items;
 
     /**
+     * @var bool
+     */
+    protected $isTemplate = false;
+
+    /**
      * Resource constructor.
      *
      * @param Model $model
@@ -184,7 +189,10 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
         return $this->model;
     }
 
-    public function getRules()
+    /**
+     * @return array
+     */
+    public function getRules(): array
     {
         $rules = [];
 
@@ -231,6 +239,23 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
         $field->setFieldSet($this);
 
         $this->items->offsetSet($key, $field);
+    }
+
+    /**
+     * @param  FieldInterface  $existingField
+     * @param  FieldInterface  $newField
+     *
+     * @return $this
+     */
+    public function overwrite(FieldInterface $existingField, FieldInterface $newField): self
+    {
+        foreach ($this->items as $key => $field) {
+            if($existingField === $field) {
+                $this->items[$key] = $newField;
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -392,5 +417,25 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
         }
 
         return $this->items->__call($method, $parameters);
+    }
+
+    /**
+     * @param  bool  $isTemplate
+     *
+     * @return FieldSet
+     */
+    public function setIsTemplate(bool $isTemplate): FieldSet
+    {
+        $this->isTemplate = $isTemplate;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTemplate(): bool
+    {
+        return $this->isTemplate;
     }
 }

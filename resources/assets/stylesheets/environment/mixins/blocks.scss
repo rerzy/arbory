@@ -1,47 +1,39 @@
-@mixin clear-inside
-{
-    &:after
-    {
-       content: " ";
-       display: table;
-       clear: both;
+@mixin clear-inside {
+    &:after {
+        content: " ";
+        display: table;
+        clear: both;
     }
 }
 
-@mixin unclear-inside
-{
-    &:after
-    {
-       content: none;
-       display: none;
-       clear: none;
+@mixin unclear-inside {
+    &:after {
+        content: none;
+        display: none;
+        clear: none;
     }
 }
 
-@mixin block-list
-{
+@mixin block-list {
     display: block;
     list-style: none;
     margin: 0;
     padding: 0;
-
-    & > li
-    {
+    
+    & > li {
         display: block;
         margin: 0;
         padding: 0;
     }
-
-    & > li:before
-    {
+    
+    & > li:before {
         content: "";
         display: none;
     }
-
+    
 }
 
-@mixin pop-up-menu
-{
+@mixin pop-up-menu {
     // used for floating pop-up menus (toolboxes, localization menus etc)
     @include block-list;
     display: none;
@@ -50,15 +42,13 @@
     left: 0;
     z-index: 100;
     text-align: left;
-
-    > ul
-    {
+    
+    > ul {
         @include block-list;
         position: relative;
     }
-
-    button, a, .button
-    {
+    
+    button, a, .button {
         display: block;
         white-space: nowrap;
         width: 100%;
@@ -67,8 +57,7 @@
 }
 
 
-@mixin full-screen-overlay
-{
+@mixin full-screen-overlay {
     // used for displaying a clickable closing layer over the whole page under a pop-up-menu
     position: absolute;
     left: 0;
@@ -80,54 +69,45 @@
 }
 
 
-
-@mixin inverted( $background-color: $color-background-inverted-normal, $text-color: $color-text-inverted-lightest )
-{
+@mixin inverted( $background-color: $color-background-inverted-normal, $text-color: $color-text-inverted-lightest ) {
     background: $background-color;
     color: $text-color;
-
+    
     .button,
-    .button.secondary
-    {
+    .button.secondary {
         background-color: inherit;
         color: $color-highlight-normal;
-
+        
         &:hover,
         &:focus,
-        &:active
-        {
+        &:active {
             background-color: inherit;
             color: $text-color;
         }
-
-        &.danger
-        {
-            &:not(:hover):not(:focus):not(:active)
-            {
+        
+        &.danger {
+            &:not(:hover):not(:focus):not(:active) {
                 background-color: $background-color;
                 color: $color-alert;
             }
-
+            
             &:hover,
             &:focus,
-            &:active
-            {
+            &:active {
                 background-color: $color-alert;
             }
         }
     }
-
+    
 }
 
-@mixin section-header
-{
+@mixin section-header {
     @include inverted;
-
-    padding: steps(0.5) steps(2);
+    
+    padding: steps(1) steps(2);
     position: relative;
 }
 
-@mixin pop-up-shadow
-{
+@mixin pop-up-shadow {
     box-shadow: 1px 3px 5px 0px $color-shadow-normal;
 }

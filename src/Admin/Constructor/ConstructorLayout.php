@@ -2,15 +2,8 @@
 
 namespace Arbory\Base\Admin\Constructor;
 
-use Arbory\Base\Html\Html;
 use Arbory\Base\Admin\Form;
-use Arbory\Base\Admin\Layout\Grid;
-use Arbory\Base\Admin\Panels\Panel;
-use Arbory\Base\Admin\Widgets\Link;
-use Arbory\Base\Html\Elements\Content;
-use Arbory\Base\Admin\Layout\GridLayout;
 use Arbory\Base\Admin\Layout\LazyRenderer;
-use Arbory\Base\Services\FieldTypeRegistry;
 use Arbory\Base\Admin\Layout\AbstractLayout;
 use Arbory\Base\Admin\Layout\FormLayoutInterface;
 use Arbory\Base\Admin\Layout\Transformers\AppendTransformer;
@@ -50,16 +43,10 @@ class ConstructorLayout extends AbstractLayout implements FormLayoutInterface
     public function __construct($name = 'blocks')
     {
         $this->name = $name;
-
         $this->fieldConfigurator = function () {
-            $this->field->setItemRenderer(new Form\Fields\Renderer\Nested\PaneledItemRenderer);
-            $this->field->addClass('in-layout');
-            $this->field->sortable();
-
-            $this->field->setHidden(true);
-            $this->field->setLabel('');
-            $this->field->setAllowToAdd(false);
+            $this->field->asPanels();
         };
+
     }
 
     /**
@@ -89,12 +76,7 @@ class ConstructorLayout extends AbstractLayout implements FormLayoutInterface
      */
     public function build()
     {
-        $gridLayout = new GridLayout(new Grid());
-        $gridLayout->setWidth(9);
-        $gridLayout->addColumn(3, new LazyRenderer([$this, 'overview']));
-        $gridLayout->use(new AppendTransformer(new LazyRenderer([$this, 'renderField'])));
-
-        $this->use($gridLayout);
+        $this->use(new AppendTransformer(new LazyRenderer([$this, 'renderField'])));
     }
 
     /**
@@ -113,21 +95,10 @@ class ConstructorLayout extends AbstractLayout implements FormLayoutInterface
     public function getField(): Form\Fields\Constructor
     {
         if ($this->field === null) {
-            $field = $this->form->fields()->findFieldByInputName($this->name);
+            $this->field = $this->form->fields()->findFieldByInputName($this->name);
 
-            if ($field === null) {
+            if ($this->field === null) {
                 throw new \RuntimeException('Constructor field must be present in constructor layout');
-            }
-
-            if ($field) {
-                $this->field = $field;
-            } else {
-                /**
-                 * @var FieldTypeRegistry
-                 */
-                $registry = app(FieldTypeRegistry::class);
-
-                $this->field = $registry->resolve('constructor', [$this->name]);
             }
         }
 
@@ -137,35 +108,14 @@ class ConstructorLayout extends AbstractLayout implements FormLayoutInterface
     }
 
     /**
-     * @return Panel
-     */
-    public function overview()
-    {
-        $panel = new Panel();
-
-        $panel->setTitle('Overview');
-        $panel->setContent(new Content([
-            Html::div(
-                Link::create($this->getModalUrl())
-                    ->asButton('primary new-constructor-item')
-                    ->asAjaxbox(true)
-                    ->withIcon('plus')
-                    ->title(trans('arbory::constructor.new_block_btn'))
-            )->addClass('constructor-button-wrapper'),
-        ]))->addClass('overview-panel');
-
-        return $panel;
-    }
-
-    /**
-     * @return \Closure
+     * @return mixed
      */
     public function renderField()
     {
         $constructor = $this->getField();
 
         if (! $constructor->getFieldSet()) {
-            return;
+            return null;
         }
 
         $styleManager = $constructor->getFieldSet()->getStyleManager();
@@ -186,7 +136,7 @@ class ConstructorLayout extends AbstractLayout implements FormLayoutInterface
         return $this->getForm()->getModule()->url(
             'dialog',
             [
-                'name'  => 'constructor_types',
+                'name' => 'constructor_types',
                 'field' => $this->field->getNameSpacedName(),
             ]
         );
@@ -200,6 +150,18 @@ class ConstructorLayout extends AbstractLayout implements FormLayoutInterface
     public function setModalUrl($url): self
     {
         $this->modalUrl = $url;
+
+        return $this;
+    }
+
+    /**
+     * @param  string  $name
+     *
+     * @return ConstructorLayout
+     */
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

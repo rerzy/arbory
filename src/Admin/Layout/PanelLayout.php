@@ -94,6 +94,8 @@ class PanelLayout extends AbstractLayout implements FormLayoutInterface
         $fields = new FieldSet($this->form->getModel(), $this->form->fields()->getNamespace());
         $fields = $closure($fields, ...$parameters) ?: $fields;
 
+        $fields->setIsTemplate($this->form->fields()->isTemplate());
+
         foreach ($fields as $field) {
             $this->fields->attach($field, $parameters);
 

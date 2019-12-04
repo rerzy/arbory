@@ -1,11 +1,26 @@
-import Navigator from "./Services/Navigator";
-
 export default class AdminPanel {
     /**
      * @param {FieldRegistry} registry
+     * @param {Navigator} navigator
      */
-    constructor(registry) {
+    constructor(registry, navigator) {
+        this.navigator = navigator
         this.registry = registry;
+    }
+
+
+    /**
+     * @param {Navigator} navigator
+     */
+    set navigator(navigator) {
+        this._navigator = navigator;
+    }
+
+    /**
+     * @return {Navigator}
+     */
+    get navigator() {
+        return this._navigator;
     }
 
     /**
@@ -32,7 +47,6 @@ export default class AdminPanel {
             jQuery(e.editor.element.$).addClass("ckeditor-initialized");
         });
 
-        this.navigator = new Navigator();
         this.registerEventHandlers();
     }
 
@@ -48,6 +62,10 @@ export default class AdminPanel {
 
         body.ready(() => {
             this.initializeFields(body[0]);
+
+            if(this.navigator.exists()) {
+                this.navigator.init();
+            }
         });
     }
 

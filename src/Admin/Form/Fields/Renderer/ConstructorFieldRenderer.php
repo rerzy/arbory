@@ -14,6 +14,7 @@ use Arbory\Base\Admin\Form\Fields\FieldInterface;
 use Arbory\Base\Admin\Form\Fields\Renderer\Nested\ItemInterface;
 use Arbory\Base\Admin\Form\Fields\Renderer\Nested\PaneledItemRenderer;
 use Arbory\Base\Admin\Form\Fields\Renderer\Styles\Options\StyleOptionsInterface;
+use Illuminate\Support\Collection;
 
 class ConstructorFieldRenderer implements RendererInterface
 {
@@ -84,13 +85,11 @@ class ConstructorFieldRenderer implements RendererInterface
 
         $select->append(Html::option('--'));
 
-        foreach ($this->field->getTypes() as $type => $object) {
-            $fieldSet = $this->field->getRelationFieldSet($this->field->buildFromBlock($object), '_template_');
-
+        foreach ($this->getTemplates() as $name => $template) {
             $select->append(
-                Html::option($object->name())->setValue($type)->addAttributes(
+                Html::option($name)->setValue($name)->addAttributes(
                     [
-                        'data-template' => $this->getRelationItemHtml($object, $fieldSet, '_template_'),
+                        'data-template' => $template,
                     ]
                 )
             );
@@ -175,17 +174,10 @@ class ConstructorFieldRenderer implements RendererInterface
 
         $options->addClass('polymorphic');
 
-        $templates = collect();
-
-        foreach ($this->field->getTypes() as $type => $object) {
-            $fieldSet = $this->field->getRelationFieldSet($this->field->buildFromBlock($object), '_template_');
-
-            $templates[$object->name()] = (string) $this->getRelationItemHtml($object, $fieldSet, '_template_');
-        }
 
         $options->addAttributes(
             [
-                'data-templates' => json_encode($templates->all()),
+                'data-templates' => $this->getTemplates()->toJson(),
                 'data-namespaced-name' => $this->field->getNameSpacedName(),
             ]
         );
@@ -199,5 +191,23 @@ class ConstructorFieldRenderer implements RendererInterface
         }
 
         return $options;
+    }
+
+    /**
+     * @return Collection
+     * @throws \Arbory\Base\Exceptions\BadMethodCallException
+     */
+    public function getTemplates(): Collection
+    {
+        $templates = collect();
+
+        foreach ($this->field->getTypes() as $type => $object) {
+            $fieldSet = $this->field->getRelationFieldSet($this->field->buildFromBlock($object), FieldInterface::TEMPLATE_INDEX);
+            $fieldSet->setIsTemplate(true);
+
+            $templates[$type] = (string) $this->getRelationItemHtml($object, $fieldSet, FieldInterface::TEMPLATE_INDEX);
+        }
+
+        return $templates;
     }
 }

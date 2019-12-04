@@ -2,6 +2,7 @@
 
 namespace Arbory\Base\Admin\Panels;
 
+use Arbory\Base\Html\Elements\Element;
 use Arbory\Base\Html\Html;
 use Illuminate\Contracts\Support\Renderable;
 
@@ -22,6 +23,9 @@ class Renderer implements Renderable
         $this->panel = $panel;
     }
 
+    /**
+     * @return Element
+     */
     public function render()
     {
         $wrapper = $this->panel->getWrapper();
@@ -32,13 +36,14 @@ class Renderer implements Renderable
                 Html::div($this->panel->getContent())
                     ->addClass('content'),
             ]
-        )->addClass('panel')
-                       ->addClass(implode(' ', $this->panel->getClasses()))
-                       ->addAttributes($this->panel->getAttributes());
+        )->addClass('panel');
 
-        return $wrapper ? $wrapper($element) : $element;
+        return $this->panel->applyRenderOptions($element);
     }
 
+    /**
+     * @return Element
+     */
     protected function header()
     {
         $toolbox = $this->panel->toolbox($this->panel->getToolbox());

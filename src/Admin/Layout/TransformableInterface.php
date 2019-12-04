@@ -12,9 +12,9 @@ interface TransformableInterface
      *
      * @param Body $content
      * @param Closure $next
-     * @param array ...$parameters
+     * @param mixed ...$parameters
      *
      * @return mixed
      */
-    public function apply(Body $content, Closure $next, array ...$parameters);
+    public function apply(Body $content, Closure $next, ...$parameters);
 }

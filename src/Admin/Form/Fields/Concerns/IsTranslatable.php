@@ -2,10 +2,17 @@
 
 namespace Arbory\Base\Admin\Form\Fields\Concerns;
 
+use Arbory\Base\Admin\Form\Fields\FieldInterface;
 use Arbory\Base\Admin\Form\FieldSet;
 use Arbory\Base\Services\FieldTypeRegistry;
 use Arbory\Base\Admin\Form\Fields\Translatable;
 
+/**
+ * Trait IsTranslatable
+ * @package Arbory\Base\Admin\Form\Fields\Concerns
+ *
+ * @mixin FieldInterface
+ */
 trait IsTranslatable
 {
     /**
@@ -15,23 +22,19 @@ trait IsTranslatable
      */
     public function translatable()
     {
-        /** @var FieldTypeRegistry $registry */
+        /**
+         * @var FieldTypeRegistry $registry
+         */
         $registry = app(FieldTypeRegistry::class);
-
         $translatable = $registry->resolve('translatable', [clone $this]);
 
         /**
-         * @var FieldSet
+         * @var $fieldSet FieldSet
          */
         $fieldSet = $this->getFieldSet();
 
-        foreach ($fieldSet as $key => $field) {
-            if ($field !== $this) {
-                continue;
-            }
-
-            $fieldSet[$key] = $translatable;
-        }
+        $translatable->setFieldSet($fieldSet);
+        $fieldSet->overwrite($this, $translatable);
 
         return $translatable;
     }

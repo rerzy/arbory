@@ -1,0 +1,45 @@
+@mixin panel-header {
+    @include section-header;
+    @include clear-inside;
+    
+    margin-top: steps(2);
+    
+    h1, .title
+    {
+        float: left;
+    }
+    
+    .extras
+    {
+        float: right;
+        
+        
+        &:not(.only-text)
+        {
+            margin: steps(-1) steps(-2) steps(-1) 0;
+            
+            > * {
+                display: inline-block;
+            }
+        }
+        
+        .button {
+            border-left: 1px solid $color-border-inverted-lighter;
+            
+            &.only-icon {
+                width: 48px;
+                height: 48px;
+            }
+        }
+    }
+}
+
+@mixin panel-body {
+    border-width: 0 1px 1px 1px;
+    border-style: solid;
+    border-color: $color-border-normal;
+    margin-bottom: -1px;
+    background: #FFFFFF;
+    
+    @include clear-inside;
+}
