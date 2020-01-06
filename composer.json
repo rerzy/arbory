@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.1",
         "ext-json": "*",
         "laravel/framework": "^6.0",
         "laravelcollective/html": "^6.0",
@@ -71,8 +71,6 @@
                 "cartalyst/sentinel"
             ]
         },
-        "extra": {
-            "foxy": true
-        }
+        "foxy": true
     }
 }
