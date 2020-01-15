@@ -194,7 +194,7 @@ class Node extends Model
     }
 
     /**
-     * Return parent id (legacy support)
+     * Return parent id (legacy support).
      *
      * @return mixed
      */

@@ -303,7 +303,7 @@ class Constructor extends AbstractRelationField implements
      *
      * @return ConstructorBlock|Model
      */
-    public function buildFromBlock(BlockInterface $block):Model
+    public function buildFromBlock(BlockInterface $block): Model
     {
         $content = $block->resource();
 
