@@ -6,7 +6,7 @@ use Alsofronie\Uuid\UuidModelTrait;
 use Arbory\Base\Pages\PageInterface;
 use Baum\NestedSet\Node as BaumNode;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Arbory\Base\Repositories\NodesRepository;
 use Arbory\Base\Support\Activation\HasActivationDates;
 
@@ -79,18 +79,18 @@ class Node extends Model
     }
 
     /**
-     * @return NodeCollection|\Illuminate\Support\Collection|static[]
+     * @return \Illuminate\Support\Collection|Node[]
      */
     public function parents()
     {
-        if (! $this->relationLoaded('parents')) {
-            $this->setRelation('parents', $this->parentsQuery()->get());
-        }
-
-        return $this->getRelation('parents');
+        return $this->ancestors()->get();
     }
 
     /**
+     * Use ancestors() instead.
+     *
+     * @deprecated
+     *
      * @return Builder
      */
     public function parentsQuery()
