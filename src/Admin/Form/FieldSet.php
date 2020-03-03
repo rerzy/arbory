@@ -45,6 +45,8 @@ use Waavi\Translation\Repositories\LanguageRepository;
  * @method \Arbory\Base\Admin\Form\Fields\Textarea textarea(string $fieldName)
  * @method \Arbory\Base\Admin\Form\Fields\Translatable translatable(FieldInterface $field)
  * @method \Arbory\Base\Admin\Form\Fields\Constructor constructor( string $fieldName, ?BlockRegistry $registry = null)
+ *
+ * @mixin Collection
  */
 class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, Renderable
 {
@@ -99,7 +101,7 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
     {
         $this->items = collect();
 
-        if (is_null($styleManager)) {
+        if ($styleManager === null) {
             $styleManager = app(StyleManager::class);
         }
 
@@ -242,6 +244,8 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
     }
 
     /**
+     * Replaces existing field with a new field in its place
+     *
      * @param  FieldInterface  $existingField
      * @param  FieldInterface  $newField
      *
@@ -437,5 +441,26 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
     public function isTemplate(): bool
     {
         return $this->isTemplate;
+    }
+
+    /**
+     * Creates a new fieldset which inherits the same dependencies and is_template flag
+     *
+     * @param  Model  $model
+     * @param  string  $namespace
+     *
+     * @return $this
+     */
+    public function createInherited(Model $model, string $namespace = ''): self
+    {
+        $fieldSet = new static($model, $namespace, $this->getStyleManager());
+
+        $fieldSet->setIsTemplate($this->isTemplate());
+
+        if($this->getDispatcher()) {
+            $fieldSet->setDispatcher($this->getDispatcher());
+        }
+
+        return $fieldSet;
     }
 }

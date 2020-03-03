@@ -2,12 +2,19 @@
 
 namespace Arbory\Base\Admin\Form\Fields\Concerns;
 
+use Arbory\Base\Admin\Form\Fields\AbstractField;
 use Illuminate\Http\Request;
 use Arbory\Base\Admin\Form\FieldSet;
 use Illuminate\Database\Eloquent\Model;
 use Arbory\Base\Admin\Form\Fields\FieldInterface;
 use Arbory\Base\Admin\Form\Fields\NestedFieldInterface;
 
+/**
+ * Trait HasNestedFieldSet
+ * @package Arbory\Base\Admin\Form\Fields\Concerns
+ *
+ * @mixin AbstractField
+ */
 trait HasNestedFieldSet
 {
     /**
@@ -27,8 +34,7 @@ trait HasNestedFieldSet
      */
     public function getNestedFieldSet($model)
     {
-        $fieldSet = new FieldSet($model, $this->getNamespacedName());
-        $fieldSet->setIsTemplate($this->getFieldSet()->isTemplate());
+        $fieldSet = $this->getFieldSet()->createInherited($model, $this->getNamespacedName());
 
         return $this->configureFieldSet($fieldSet);
     }

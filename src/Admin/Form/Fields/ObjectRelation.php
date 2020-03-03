@@ -316,8 +316,7 @@ class ObjectRelation extends AbstractField
      */
     public function getInnerFieldSet()
     {
-        $fieldSet = new FieldSet($this->getModel(), $this->getNameSpacedName());
-        $fieldSet->setIsTemplate($this->getFieldSet()->isTemplate());
+        $fieldSet = $this->getFieldSet()->createInherited($this->getModel(), $this->getNameSpacedName());
 
         $value = $this->getValue();
         $ids = null;

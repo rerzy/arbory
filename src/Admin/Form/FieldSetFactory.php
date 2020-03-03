@@ -29,7 +29,7 @@ class FieldSetFactory
      *
      * @return FieldSet
      */
-    public function make($model, $namespace = null, $defaultStyle = null)
+    public function make(Model $model, $namespace = null, $defaultStyle = null)
     {
         $fieldSet = $this->newFieldSet($model, $namespace);
 
@@ -39,7 +39,13 @@ class FieldSetFactory
         return $fieldSet;
     }
 
-    protected function newFieldSet($model, $namespace)
+    /**
+     * @param  Model  $model
+     * @param  string  $namespace
+     *
+     * @return FieldSet
+     */
+    protected function newFieldSet(Model $model, string $namespace): FieldSet
     {
         return new FieldSet($model, $namespace);
     }

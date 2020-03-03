@@ -108,12 +108,10 @@ class Translatable extends AbstractField implements ProxyFieldInterface
      */
     public function getLocaleFieldSet($model, $locale)
     {
-        $fieldSet = new FieldSet(
+        $fieldSet = $this->getFieldSet()->createInherited(
             $model,
             $this->getNameSpacedName().'.'.$locale
         );
-
-        $fieldSet->setIsTemplate($this->getFieldSet()->isTemplate());
 
         $field = clone $this->field;
         $field->setFieldSet($fieldSet);

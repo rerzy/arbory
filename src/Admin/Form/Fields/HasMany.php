@@ -95,8 +95,7 @@ class HasMany extends AbstractRelationField implements NestedFieldInterface, Rep
      */
     public function getRelationFieldSet($model, $index)
     {
-        $fieldSet = new FieldSet($model, $this->getNameSpacedName().'.'.$index);
-        $fieldSet->setIsTemplate($this->getFieldSet()->isTemplate());
+        $fieldSet = $this->getFieldSet()->createInherited($model, $this->getNameSpacedName().'.'.$index);
 
         $fieldSetCallback = $this->fieldSetCallback;
         $fieldSetCallback($fieldSet);

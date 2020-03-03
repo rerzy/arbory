@@ -137,7 +137,7 @@ class Constructor extends AbstractRelationField implements
             throw new \LogicException("Block '{$blockName}' not found");
         }
 
-        $fieldSet = new FieldSet($model, $this->getNameSpacedName().'.'.$index);
+        $fieldSet = $this->getFieldSet()->createInherited($model, $this->getNameSpacedName().'.'.$index);
         $fieldSet->setIsTemplate($this->getFieldSet()->isTemplate());
 
         $fieldSet->hidden($model->getKeyName())
