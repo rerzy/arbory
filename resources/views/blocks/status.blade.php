@@ -5,7 +5,7 @@
             @lang('arbory::overview.status.current')
         </div>
         <div class="icon">
-            <img class="fa" src="/arbory/images/exclamation.png">
+            <i class="fa fa-exclamation-circle"></i>
         </div>
         <div class="options">
             <div class="list">

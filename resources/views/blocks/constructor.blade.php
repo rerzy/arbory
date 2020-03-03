@@ -1,7 +1,8 @@
 <section class="constructor block">
 
     <a href="#{{$modalId}}" type="button" class="button overview-constructor-open">
-        <img class="fa" src="/arbory/images/add.png">
+        <i class="fa fa-plus-circle"></i>
+        
         @lang('arbory::overview.constructor.add_new_block')
     </a>
     

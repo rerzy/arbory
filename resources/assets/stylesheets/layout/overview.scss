@@ -53,6 +53,11 @@ section.overview {
         
         .icon {
             margin-left: steps(1.5);
+            
+            .fa {
+                font-size: 18px;
+                line-height: 18px;
+            }
         }
         
         .list {
@@ -103,15 +108,16 @@ section.overview {
             color: #3F3F3F;
             font-size: 13px;
             letter-spacing: 0.73px;
-            line-height: 20px;
             width: 100%;
             padding: steps(1);
             display: flex;
             align-content: center;
             justify-content: center;
+            line-height: 24px;
             
             .fa {
-                margin-right: steps(1.5);
+                font-size: 24px;
+                color: #00AE5D;
             }
         }
     }
