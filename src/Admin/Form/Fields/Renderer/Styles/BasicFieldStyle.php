@@ -42,9 +42,7 @@ class BasicFieldStyle extends AbstractFieldStyle implements FieldStyleInterface
         $template->append($this->renderField($field));
 
         if ($info = $field->getTooltip()) {
-            $template->append(
-                Html::abbr(' ?')->addAttributes(['title' => $info])
-            );
+            $template->append($this->renderTooltip($info));
         }
 
         return $options->applyRenderOptions($template);

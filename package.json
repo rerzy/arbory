@@ -26,7 +26,8 @@
     "jquery-ui-timepicker-addon": "^1.6.3",
     "js-cookie": "^2.2.1",
     "laravel-file-manager": "^2.4.10",
-    "magnific-popup": "^1.1.0"
+    "magnific-popup": "^1.1.0",
+    "tippy.js": "^6.0.0"
   },
   "devDependencies": {
     "cross-env": "^5.2.0",

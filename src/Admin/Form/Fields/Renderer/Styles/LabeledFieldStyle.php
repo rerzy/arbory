@@ -68,9 +68,7 @@ class LabeledFieldStyle extends AbstractFieldStyle implements FieldStyleInterfac
         }
 
         if ($info = $field->getTooltip()) {
-            $element->append(
-                Html::abbr(' ?')->addAttributes(['title' => $info])
-            );
+            $element->append($this->renderTooltip($info));
         }
 
         return $element;
