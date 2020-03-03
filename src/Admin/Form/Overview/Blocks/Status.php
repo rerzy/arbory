@@ -9,6 +9,7 @@ use Arbory\Base\Admin\Form\Fields\Styles\StyleManager;
 use Arbory\Base\Admin\Form\FieldSet;
 use Arbory\Base\Html\Elements\Content;
 use Arbory\Base\Nodes\Node;
+use Arbory\Base\Services\FieldTypeRegistry;
 use Arbory\Base\Support\Activation\HasActivationDates;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
@@ -47,6 +48,16 @@ class Status extends Block implements Renderable
     protected $model;
 
     /**
+     * @var FieldTypeRegistry
+     */
+    protected $fieldTypeRegistry;
+
+    /**
+     * @var string
+     */
+    protected $dateFormat = 'Y-m-d H:i';
+
+    /**
      * Status constructor.
      *
      * @param  string  $name
@@ -55,8 +66,10 @@ class Status extends Block implements Renderable
     {
         parent::__construct($name);
         $this->setModalId($this->getName());
+
         $this->styleManager = app(StyleManager::class);
         $this->validator = app(Validator::class);
+        $this->fieldTypeRegistry = app(FieldTypeRegistry::class);
     }
 
     /**
@@ -77,8 +90,8 @@ class Status extends Block implements Renderable
     {
         $this->overview->getForm()->addEventListener('validate.before', function ($request) {
             $this->validator->setRules([
-                $this->overview->getForm()->getNamespace().'.'.$this->model->getActivateAtColumnName() => 'nullable|date_format:Y-m-d H:i',
-                $this->overview->getForm()->getNamespace().'.'.$this->model->getExpireAtColumnName() => 'nullable|date_format:Y-m-d H:i|after_or_equal:resource.'.
+                $this->overview->getForm()->getNamespace().'.'.$this->model->getActivateAtColumnName() => 'nullable|date_format:' . $this->dateFormat,
+                $this->overview->getForm()->getNamespace().'.'.$this->model->getExpireAtColumnName() => 'nullable|date_format:' . $this->dateFormat . '|after_or_equal:resource.'.
                     $this->model->getActivateAtColumnName(),
             ]);
             $this->validator->validate($this->validator->rules());
@@ -209,7 +222,7 @@ class Status extends Block implements Renderable
      */
     protected function createRadioField($name, $value)
     {
-        return (new Radio($name))->values($value)->setFieldSet($this->fieldSet());
+        return $this->fieldTypeRegistry->resolve('radio', [$name])->values($value)->setFieldSet($this->fieldSet());
     }
 
     /**
@@ -219,7 +232,9 @@ class Status extends Block implements Renderable
      */
     protected function createDateTimeField($name)
     {
-        return (new DateTime($name))->setFieldSet($this->fieldSet());
+        return $this->fieldTypeRegistry->resolve('dateTime', [$name])
+                                       ->setFieldSet($this->fieldSet())
+                                       ->setFormat($this->dateFormat);
     }
 
     /**
@@ -233,7 +248,7 @@ class Status extends Block implements Renderable
 
         switch ($publishedStatus) {
             case Node::STATUS_PUBLISHED:
-                $model->setAttribute($this->model->getActivateAtColumnName(), date('Y-m-d H:i:s'));
+                $model->setAttribute($this->model->getActivateAtColumnName(), now());
                 $model->setAttribute($this->model->getExpireAtColumnName(), null);
                 break;
 
@@ -249,6 +264,26 @@ class Status extends Block implements Renderable
                     Arr::get($requestResource, $this->model->getExpireAtColumnName()));
                 break;
         }
+    }
+
+    /**
+     * @param  string  $dateFormat
+     *
+     * @return Status
+     */
+    public function setDateFormat(string $dateFormat): Status
+    {
+        $this->dateFormat = $dateFormat;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateFormat(): string
+    {
+        return $this->dateFormat;
     }
 
     /**
