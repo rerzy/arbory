@@ -62,6 +62,7 @@ return [
         'textarea' => Arbory\Base\Admin\Form\Fields\Textarea::class,
         'translatable' => Arbory\Base\Admin\Form\Fields\Translatable::class,
         'constructor' => Arbory\Base\Admin\Form\Fields\Constructor::class,
+        'radio' => Arbory\Base\Admin\Form\Fields\Radio::class,
     ],
 
     'field_styles' => [
