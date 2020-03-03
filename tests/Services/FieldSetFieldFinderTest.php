@@ -20,6 +20,11 @@ use Arbory\Base\Admin\Form\Fields\AbstractField;
 use Arbory\Base\Admin\Form\Fields\Styles\StyleManager;
 use Waavi\Translation\Repositories\LanguageRepository;
 
+/**
+ * Class FieldSetFieldFinderTest.
+ *
+ * @covers \Arbory\Base\Services\FieldSetFieldFinder
+ */
 final class FieldSetFieldFinderTest extends TestCase
 {
     /**
@@ -30,7 +35,7 @@ final class FieldSetFieldFinderTest extends TestCase
     /**
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         app()->singleton(StyleManager::class, static function () {
             $styles = [
@@ -54,7 +59,7 @@ final class FieldSetFieldFinderTest extends TestCase
     /**
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

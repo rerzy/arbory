@@ -6,6 +6,11 @@ use Illuminate\Support\Arr;
 use PHPUnit\Framework\TestCase;
 use Arbory\Base\Html\Elements\Element;
 
+/**
+ * Class ElementTest.
+ *
+ * @covers \Arbory\Base\Html\Elements\Element
+ */
 final class ElementTest extends TestCase
 {
     /**
@@ -21,7 +26,7 @@ final class ElementTest extends TestCase
     /**
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->name = 'test';
         $this->attributes = [

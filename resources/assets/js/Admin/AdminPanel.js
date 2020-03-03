@@ -4,7 +4,7 @@ export default class AdminPanel {
      * @param {Navigator} navigator
      */
     constructor(registry, navigator) {
-        this.navigator = navigator
+        this.navigator = navigator;
         this.registry = registry;
     }
 

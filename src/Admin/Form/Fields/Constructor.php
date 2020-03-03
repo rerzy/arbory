@@ -261,11 +261,16 @@ class Constructor extends AbstractRelationField implements
      */
     public function getRules(): array
     {
-        $rules = [];
+        $rules = [[]];
 
         $items = (array) request()->input($this->getNameSpacedName(), []);
 
         foreach ($items as $index => $item) {
+            // Do not add rules for fields which will be removed
+            if (filter_var(Arr::get($item, '_destroy'), FILTER_VALIDATE_BOOLEAN)) {
+                continue;
+            }
+
             $relatedModel = $this->createRelatedModelFromRequest($item);
 
             $this->verifyBlockFromRequest($item, $relatedModel);
@@ -276,11 +281,11 @@ class Constructor extends AbstractRelationField implements
             );
 
             foreach ($relatedFieldSet->getFields() as $field) {
-                $rules = array_merge($rules, $field->getRules());
+                $rules[] = $field->getRules();
             }
         }
 
-        return $rules;
+        return array_merge(...$rules);
     }
 
     /**
@@ -298,7 +303,7 @@ class Constructor extends AbstractRelationField implements
      *
      * @return ConstructorBlock|Model
      */
-    public function buildFromBlock(BlockInterface $block):Model
+    public function buildFromBlock(BlockInterface $block): Model
     {
         $content = $block->resource();
 
@@ -373,7 +378,7 @@ class Constructor extends AbstractRelationField implements
      *
      * @return ConstructorBlock
      */
-    protected function createRelatedModelFromRequest(array $item):Model
+    protected function createRelatedModelFromRequest(array $item): Model
     {
         $relation = $this->getRelation();
         $relatedModel = $this->findRelatedModel($item);

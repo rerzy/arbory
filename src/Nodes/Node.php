@@ -4,14 +4,16 @@ namespace Arbory\Base\Nodes;
 
 use Alsofronie\Uuid\UuidModelTrait;
 use Arbory\Base\Pages\PageInterface;
-use Illuminate\Database\Query\Builder;
+use Baum\NestedSet\Node as BaumNode;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Arbory\Base\Repositories\NodesRepository;
 use Arbory\Base\Support\Activation\HasActivationDates;
 
 /**
  * Class Node.
  */
-class Node extends \Baum\Node
+class Node extends Model
 {
     public const STATUS_PUBLISHED = 'published';
     public const STATUS_UNPUBLISHED = 'unpublished';
@@ -20,6 +22,17 @@ class Node extends \Baum\Node
 
     use UuidModelTrait;
     use HasActivationDates;
+    use BaumNode;
+
+    /**
+     * @var string
+     */
+    protected $leftColumnName = 'lft';
+
+    /**
+     * @var string
+     */
+    protected $rightColumnName = 'rgt';
 
     /**
      * @var array
@@ -66,18 +79,18 @@ class Node extends \Baum\Node
     }
 
     /**
-     * @return NodeCollection|\Illuminate\Support\Collection|static[]
+     * @return \Illuminate\Support\Collection|Node[]
      */
     public function parents()
     {
-        if (! $this->relationLoaded('parents')) {
-            $this->setRelation('parents', $this->parentsQuery()->get());
-        }
-
-        return $this->getRelation('parents');
+        return $this->ancestors()->get();
     }
 
     /**
+     * Use ancestors() instead.
+     *
+     * @deprecated
+     *
      * @return Builder
      */
     public function parentsQuery()
@@ -110,15 +123,6 @@ class Node extends \Baum\Node
     public function getSlug()
     {
         return $this->slug;
-    }
-
-    /**
-     * @param array $models
-     * @return NodeCollection
-     */
-    public function newCollection(array $models = [])
-    {
-        return new NodeCollection($models);
     }
 
     /**
@@ -174,6 +178,16 @@ class Node extends \Baum\Node
         }
 
         return true;
+    }
+
+    /**
+     * Return parent id (legacy support).
+     *
+     * @return mixed
+     */
+    public function getParentId()
+    {
+        return $this->getAttribute($this->getParentColumnName());
     }
 
     public function getPublishedStatusAttribute()

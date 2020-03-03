@@ -10,6 +10,8 @@ use Arbory\Base\Admin\Widgets\Breadcrumbs;
 use Arbory\Base\Admin\Widgets\SearchField;
 use Arbory\Base\Admin\Layout\AbstractLayout;
 use Arbory\Base\Admin\Layout\LayoutInterface;
+use Arbory\Base\Admin\Widgets\Link;
+use Arbory\Base\Html\Html;
 
 class Layout extends AbstractLayout implements LayoutInterface
 {
@@ -51,18 +53,45 @@ class Layout extends AbstractLayout implements LayoutInterface
     }
 
     /**
-     * @return Button|null
+     * @return Content|null
      */
-    protected function filterButton()
+    protected function filterButtons()
     {
         if (! $this->grid->hasTool('filter')) {
             return;
         }
 
-        return Button::create()
-            ->type('button', 'filter js-filter-trigger')
-            ->withIcon('filter')
-            ->title(trans('arbory::filter.filter'));
+        $savedFilterButtons = Html::div()->addClass('saved-filters');
+        foreach ($this->grid->getFilterManager()->getSavedFilters() as $savedFilter) {
+            parse_str($savedFilter->filter, $parameters);
+
+            $button = Html::div()->addClass('saved-filter');
+            $button->append(
+                Link::create($this->grid->getModule()->url('index', $parameters))
+                    ->asButton('link')
+                    ->withIcon('bookmark')
+                    ->title($savedFilter->name)
+            );
+            $button->append(
+                Link::create($this->grid->getModule()->url('dialog', [
+                    'dialog' => 'delete_filter',
+                    'filter_id' => $savedFilter->id,
+                ]))
+                    ->asButton('delete only-icon')
+                    ->withIcon('times')
+                    ->asAjaxbox()
+            );
+
+            $savedFilterButtons->append($button);
+        }
+
+        return new Content([
+            $savedFilterButtons,
+            Button::create()
+                ->type('button', 'filter js-filter-trigger')
+                ->withIcon('filter')
+                ->title(trans('arbory::filter.filter')),
+        ]);
     }
 
     /**
@@ -99,7 +128,7 @@ class Layout extends AbstractLayout implements LayoutInterface
      */
     protected function addSlots(Body $body)
     {
-        $body->getTarget()->slot('header_right_filter', $this->filterButton());
+        $body->getTarget()->slot('header_right_filter', $this->filterButtons());
         $body->getTarget()->slot('header_right', $this->searchField());
     }
 }

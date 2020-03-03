@@ -16,6 +16,11 @@ return [
         'select_content_type' => 'Select content type of new block',
         'cancel' => 'Cancel',
     ],
+    'save_filter' => [
+        'title' => 'Save filter',
+        'filter_name' => 'Filter name',
+        'save' => 'Save',
+    ],
     'status' => [
         'change_page_status' => 'Change page status on save',
         'publish_on_save' => 'Publish on save',

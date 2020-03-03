@@ -110,9 +110,10 @@ class NodesController extends Controller
          * @var Node
          */
         $node = $form->fields()->getModel();
+        $contentType = $node->getContentType();
 
-        if ($contentType = $node->getContentType()) {
-            $form->title($form->getTitle().' ('.$this->makeNameFromType($contentType).')');
+        if ($contentType) {
+            $form->title(sprintf('%s (%s)', $form->getTitle(), $this->makeNameFromType($contentType)));
         }
 
         $form->addEventListeners(['create.after'], function () use ($form) {
@@ -201,12 +202,12 @@ class NodesController extends Controller
 
         if ($parentId) {
             $parent = $node->find($parentId);
-            $node->appendToNode($parent)->save();
+            $node->makeChildOf($parent);
 
             return;
         }
 
-        $node->saveAsRoot();
+        $node->makeRoot();
     }
 
     /**
@@ -260,12 +261,12 @@ class NodesController extends Controller
         $toRightId = $request->input('toRightId');
 
         if ($toLeftId) {
-            $node->insertAfterNode($nodes->findOneBy('id', $toLeftId));
+            $node->moveToRightOf($nodes->findOneBy('id', $toLeftId));
         } elseif ($toRightId) {
-            $node->insertBeforeNode($nodes->findOneBy('id', $toRightId));
+            $node->moveToLeftOf($nodes->findOneBy('id', $toRightId));
         }
 
-        return response();
+        return response()->make();
     }
 
     /**
@@ -365,7 +366,7 @@ class NodesController extends Controller
      */
     protected function makeNameFromType($type): string
     {
-        return app(NameGenerator::class)->generate($type);
+        return $this->container->get(NameGenerator::class)->generate($type);
     }
 
     /**
