@@ -10,6 +10,7 @@ use Arbory\Base\Admin\Navigator\NavigableInterface;
 use Arbory\Base\Admin\Navigator\Navigator;
 use Arbory\Base\Admin\Page;
 use Arbory\Base\Admin\Traits\EventDispatcher;
+use Illuminate\Support\Traits\Macroable;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Arbory\Base\Admin\Form\FieldSet;
@@ -30,6 +31,7 @@ abstract class AbstractField implements
     use IsTranslatable;
     use IsControlField;
     use EventDispatcher;
+    use Macroable;
 
     /**
      * @var string
@@ -252,6 +254,8 @@ abstract class AbstractField implements
     public function setFieldSet(FieldSet $fieldSet)
     {
         $this->fieldSet = $fieldSet;
+
+        $this->trigger('field.attached', $this, $fieldSet);
 
         return $this;
     }

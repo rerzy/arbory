@@ -2,6 +2,7 @@
 
 namespace Arbory\Base\Admin\Form;
 
+use Arbory\Base\Admin\Traits\EventDispatcher;
 use Countable;
 use ArrayAccess;
 use Illuminate\Support\Arr;
@@ -50,6 +51,8 @@ use Waavi\Translation\Repositories\LanguageRepository;
  */
 class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, Renderable
 {
+    use EventDispatcher;
+
     /**
      * @var FieldSetRendererInterface
      */
@@ -415,11 +418,16 @@ class FieldSet implements ArrayAccess, IteratorAggregate, Countable, Arrayable, 
     public function __call($method, $parameters)
     {
         if ($this->fieldTypeRegister->has($method)) {
-            return $this->add(
+            $field = $this->add(
                 $this->fieldTypeRegister->resolve($method, $parameters)
             );
+
+            $this->trigger('field.created', $field);
+
+            return $field;
         }
 
+        // Field not found, try forwarding call to collection
         return $this->items->__call($method, $parameters);
     }
 

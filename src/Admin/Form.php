@@ -3,6 +3,7 @@
 namespace Arbory\Base\Admin;
 
 use Arbory\Base\Admin\Navigator\Navigator;
+use Illuminate\Events\Dispatcher;
 use Illuminate\Http\Request;
 use Arbory\Base\Content\Relation;
 use Arbory\Base\Admin\Form\FieldSet;
@@ -69,13 +70,16 @@ class Form
      * @param Model $model
      * @param string $namespace
      */
-    public function __construct(Model $model, $namespace = 'resource')
+    public function __construct(Model $model, ?string $namespace = 'resource')
     {
+        $this->dispatcher = new Dispatcher();
         $this->model = $model;
         $this->namespace = $namespace;
         $this->fields = new FieldSet($model, $this->namespace, app(StyleManager::class));
         $this->validator = app(Validator::class);
         $this->navigator = new Navigator();
+
+        $this->fields->setDispatcher($this->dispatcher);
 
         $this->registerEventListeners();
     }
