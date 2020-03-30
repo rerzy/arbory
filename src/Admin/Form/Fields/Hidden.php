@@ -15,6 +15,11 @@ class Hidden extends ControlField
         'type' => 'hidden',
     ];
 
+    /**
+     * @var bool
+     */
+    protected $ignoreRows = true;
+
     public function beforeRender(RendererInterface $renderer)
     {
         $this->addAttributes([
