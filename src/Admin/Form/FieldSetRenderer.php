@@ -82,8 +82,16 @@ class FieldSetRenderer implements FieldSetRendererInterface
 
         $currentRow = $grid->row();
 
+        $ignoredFields = [];
+
         foreach ($this->fieldSet->all() as $field) {
             if ($field->isHidden()) {
+                continue;
+            }
+
+            if($field->getIgnoreRows()) {
+                $ignoredFields[] = $this->renderField($field);
+
                 continue;
             }
 
@@ -111,7 +119,10 @@ class FieldSetRenderer implements FieldSetRendererInterface
             $currentRow->addColumn($this->createColumn($rows, $rendered));
         }
 
-        return $grid;
+        return new Content([
+            new Content($ignoredFields),
+            $grid,
+        ]);
     }
 
     /**

@@ -197,4 +197,16 @@ interface FieldInterface
      * @return FieldInterface
      */
     public function setHidden(bool $value): self;
+
+    /**
+     * @param bool|null $value
+     *
+     * @return FieldInterface
+     */
+    public function setIgnoreRows(?bool $value): self;
+
+    /**
+     * @return bool|null
+     */
+    public function getIgnoreRows(): ?bool;
 }

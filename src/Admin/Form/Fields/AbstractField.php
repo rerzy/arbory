@@ -81,6 +81,13 @@ abstract class AbstractField implements FieldInterface, ControlFieldInterface
     protected $hidden = false;
 
     /**
+     * Should be ignored when building grid and be placed outside of it
+     *
+     * @var bool|null
+     */
+    protected $ignoreRows;
+
+    /**
      * AbstractField constructor.
      * @param string $name
      */
@@ -452,6 +459,26 @@ abstract class AbstractField implements FieldInterface, ControlFieldInterface
     public function setHidden(bool $hidden): FieldInterface
     {
         $this->hidden = $hidden;
+
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIgnoreRows(): ?bool
+    {
+        return $this->ignoreRows;
+    }
+
+    /**
+     * @param  bool|null  $ignoreRows
+     *
+     * @return FieldInterface
+     */
+    public function setIgnoreRows(?bool $ignoreRows): FieldInterface
+    {
+        $this->ignoreRows = $ignoreRows;
 
         return $this;
     }
