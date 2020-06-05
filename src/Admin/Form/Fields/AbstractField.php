@@ -3,6 +3,7 @@
 namespace Arbory\Base\Admin\Form\Fields;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Arbory\Base\Admin\Form\FieldSet;
@@ -19,6 +20,7 @@ abstract class AbstractField implements FieldInterface, ControlFieldInterface
 {
     use IsTranslatable;
     use IsControlField;
+    use Macroable;
 
     /**
      * @var string
